@@ -1,5 +1,6 @@
 module Perspectives.ApiTypes where
 
+import Data.Foreign (toForeign)
 import Data.Foreign.Class (class Decode, class Encode)
 import Data.Foreign.Generic (defaultOptions, genericDecode, genericEncode)
 import Data.Foreign.Generic.Types (Options)
@@ -30,9 +31,21 @@ derive instance genericRequestType :: Generic RequestType _
 instance decodeRequestType :: Decode RequestType where
   decode = genericDecode defaultOptions
 
+instance encodeRequestType :: Encode RequestType where
+  encode GetRolBinding = toForeign "GetRolBinding"
+  encode GetBinding = toForeign "GetBinding"
+  encode GetBindingType = toForeign "GetBindingType"
+  encode GetRol = toForeign "GetRol"
+  encode GetRolContext = toForeign "GetRolContext"
+  encode GetContextType = toForeign "GetContextType"
+  encode GetProperty = toForeign "GetProperty"
+  encode GetViewProperties = toForeign "GetViewProperties"
+  encode Unsubscribe = toForeign "Unsubscribe"
+  encode ShutDown = toForeign "ShutDown"
+
 -- | A request as can be sent to the core.
 newtype Request = Request
-  { type :: RequestType
+  { rtype :: RequestType
   , subject :: String
   , predicate :: String
   , setterId :: CorrelationIdentifier}
@@ -45,6 +58,9 @@ requestOptions = defaultOptions { unwrapSingleConstructors = true }
 instance decodeRequest :: Decode Request where
   decode = genericDecode requestOptions
 
+instance encodeRequest :: Encode Request where
+  encode = genericEncode requestOptions
+
 -----------------------------------------------------------
 -- RESPONSE
 -----------------------------------------------------------
@@ -53,12 +69,15 @@ instance decodeRequest :: Decode Request where
 -- | 'objects' in the basic fact <subject, predicate, object>.
 type Object = String
 
-newtype Response = Response {setterId :: CorrelationIdentifier, objects :: Array Object}
+newtype Response = Response {corrId :: CorrelationIdentifier, objects :: Array Object}
 
 derive instance genericIdentifiableObjects :: Generic Response _
 
 instance encodeIdentifiableObjects :: Encode Response where
   encode = genericEncode requestOptions
 
+instance decodeIdentifiableObjects :: Decode Response where
+  decode = genericDecode requestOptions
+
 response ::  CorrelationIdentifier -> Array Object -> Response
-response setterId objects = Response {setterId, objects}
+response corrId objects = Response {corrId, objects}
