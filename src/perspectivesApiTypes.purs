@@ -5,6 +5,8 @@ import Data.Foreign.Class (class Decode, class Encode)
 import Data.Foreign.Generic (defaultOptions, genericDecode, genericEncode)
 import Data.Foreign.Generic.Types (Options)
 import Data.Generic.Rep (class Generic)
+import Data.StrMap (StrMap)
+import Perspectives.EntiteitAndRDFAliases (ID, Value)
 
 -- | Identifies Requests with Responses.
 type CorrelationIdentifier = String
@@ -71,7 +73,7 @@ type Object = String
 
 newtype Response = Response {corrId :: CorrelationIdentifier, objects :: Array Object}
 
-derive instance genericIdentifiableObjects :: Generic Response _
+derive instance genericResponse :: Generic Response _
 
 instance encodeIdentifiableObjects :: Encode Response where
   encode = genericEncode requestOptions
@@ -81,3 +83,46 @@ instance decodeIdentifiableObjects :: Decode Response where
 
 response ::  CorrelationIdentifier -> Array Object -> Response
 response corrId objects = Response {corrId, objects}
+
+-----------------------------------------------------------
+-- SERIALIZATION OF CONTEXTS AND ROLES ON THE API
+-- These types are simpler versions of PerspectContext and PerspectRol.
+-- Not meant to put into couchdb, but to use as transport format over the API (whether the TCP or internal channel).
+-----------------------------------------------------------
+newtype ContextSerialization = ContextSerialization
+  { context :: String
+  , rollen :: StrMap RolSerialization
+  , interneProperties :: PropertySerialization
+  , externeProperties :: PropertySerialization
+}
+
+newtype RolSerialization = RolSerialization
+  { properties :: PropertySerialization
+  , binding :: ID
+}
+
+newtype PropertySerialization = PropertySerialization (StrMap (Array Value))
+
+derive instance genericContextSerialization :: Generic ContextSerialization _
+
+instance encodeContextSerialization :: Encode ContextSerialization where
+  encode = genericEncode requestOptions
+
+instance decodeContextSerialization :: Decode ContextSerialization where
+  decode = genericDecode requestOptions
+
+derive instance genericRolSerialization :: Generic RolSerialization _
+
+instance encodeRolSerialization :: Encode RolSerialization where
+  encode = genericEncode requestOptions
+
+instance decodeRolSerialization :: Decode RolSerialization where
+  decode = genericDecode requestOptions
+
+derive instance genericPropertySerialization :: Generic PropertySerialization _
+
+instance encodePropertySerialization :: Encode PropertySerialization where
+  encode = genericEncode requestOptions
+
+instance decodePropertySerialization :: Decode PropertySerialization where
+  decode = genericDecode requestOptions

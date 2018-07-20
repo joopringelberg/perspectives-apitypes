@@ -1,5 +1,7 @@
 # perspectives-apitypes
-Types to use in Purescript programs that communicate with Perspectives-core over TCP. This module is used in:
+Types to use in Purescript programs that communicate with Perspectives-core over TCP. The module also defines a serialization format of contexts, roles and properties that is used to create Contexts and Roles over the API.
+
+This module is used in:
 * [perspectives-core](https://github.com/joopringelberg/perspectives-core)
 * [perspectives-arc-languageserver](https://github.com/joopringelberg/perspectives-arc-languageserver)
 
