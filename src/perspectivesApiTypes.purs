@@ -5,11 +5,14 @@ import Data.Foreign.Class (class Decode, class Encode)
 import Data.Foreign.Generic (defaultOptions, genericDecode, genericEncode)
 import Data.Foreign.Generic.Types (Options)
 import Data.Generic.Rep (class Generic)
-import Data.StrMap (StrMap)
-import Perspectives.EntiteitAndRDFAliases (ID, Value)
+import Data.StrMap (StrMap, empty)
 
 -- | Identifies Requests with Responses.
 type CorrelationIdentifier = String
+
+type ID = String
+type Value = String
+type ContextID = String
 
 -----------------------------------------------------------
 -- REQUEST
@@ -50,7 +53,9 @@ newtype Request = Request
   { rtype :: RequestType
   , subject :: String
   , predicate :: String
-  , setterId :: CorrelationIdentifier}
+  , object :: String
+  , setterId :: CorrelationIdentifier
+  , contextDescription :: ContextSerialization}
 
 derive instance genericRequest :: Generic Request _
 
@@ -89,9 +94,12 @@ response corrId objects = Response {corrId, objects}
 -- These types are simpler versions of PerspectContext and PerspectRol.
 -- Not meant to put into couchdb, but to use as transport format over the API (whether the TCP or internal channel).
 -----------------------------------------------------------
-newtype ContextSerialization = ContextSerialization
-  { context :: String
-  , rollen :: StrMap RolSerialization
+newtype ContextSerialization = ContextSerialization ContextSerializationRecord
+
+type ContextSerializationRecord =
+  { id :: String
+  , ctype :: ContextID
+  , rollen :: StrMap (Array RolSerialization)
   , interneProperties :: PropertySerialization
   , externeProperties :: PropertySerialization
 }
@@ -100,6 +108,8 @@ newtype RolSerialization = RolSerialization
   { properties :: PropertySerialization
   , binding :: ID
 }
+defaultContextSerializationRecord :: ContextSerializationRecord
+defaultContextSerializationRecord = {id: "", ctype: "", rollen: empty, interneProperties: PropertySerialization empty, externeProperties: PropertySerialization empty}
 
 newtype PropertySerialization = PropertySerialization (StrMap (Array Value))
 
