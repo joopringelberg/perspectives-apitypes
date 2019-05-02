@@ -1,11 +1,14 @@
 module Perspectives.ApiTypes where
 
-import Data.Foreign (toForeign)
-import Data.Foreign.Class (class Decode, class Encode)
-import Data.Foreign.Generic (defaultOptions, genericDecode, genericEncode)
-import Data.Foreign.Generic.Types (Options)
+import Prelude
+
+import Foreign (unsafeToForeign)
+import Foreign.Class (class Decode, class Encode)
+import Foreign.Generic (defaultOptions, genericDecode, genericEncode)
+import Foreign.Generic.Types (Options)
 import Data.Generic.Rep (class Generic)
-import Data.StrMap (StrMap, empty)
+import Data.Maybe (Maybe(..))
+import Foreign.Object (Object, empty) as F
 
 -- | Identifies Requests with Responses.
 type CorrelationIdentifier = String
@@ -37,16 +40,16 @@ instance decodeRequestType :: Decode RequestType where
   decode = genericDecode defaultOptions
 
 instance encodeRequestType :: Encode RequestType where
-  encode GetRolBinding = toForeign "GetRolBinding"
-  encode GetBinding = toForeign "GetBinding"
-  encode GetBindingType = toForeign "GetBindingType"
-  encode GetRol = toForeign "GetRol"
-  encode GetRolContext = toForeign "GetRolContext"
-  encode GetContextType = toForeign "GetContextType"
-  encode GetProperty = toForeign "GetProperty"
-  encode GetViewProperties = toForeign "GetViewProperties"
-  encode Unsubscribe = toForeign "Unsubscribe"
-  encode ShutDown = toForeign "ShutDown"
+  encode GetRolBinding = unsafeToForeign "GetRolBinding"
+  encode GetBinding = unsafeToForeign "GetBinding"
+  encode GetBindingType = unsafeToForeign "GetBindingType"
+  encode GetRol = unsafeToForeign "GetRol"
+  encode GetRolContext = unsafeToForeign "GetRolContext"
+  encode GetContextType = unsafeToForeign "GetContextType"
+  encode GetProperty = unsafeToForeign "GetProperty"
+  encode GetViewProperties = unsafeToForeign "GetViewProperties"
+  encode Unsubscribe = unsafeToForeign "Unsubscribe"
+  encode ShutDown = unsafeToForeign "ShutDown"
 
 -- | A request as can be sent to the core.
 newtype Request = Request
@@ -55,7 +58,8 @@ newtype Request = Request
   , predicate :: String
   , object :: String
   , setterId :: CorrelationIdentifier
-  , contextDescription :: ContextSerialization}
+  , contextDescription :: ContextSerialization
+  , rolDescription :: RolSerialization}
 
 derive instance genericRequest :: Generic Request _
 
@@ -94,12 +98,23 @@ response corrId objects = Response {corrId, objects}
 -- These types are simpler versions of PerspectContext and PerspectRol.
 -- Not meant to put into couchdb, but to use as transport format over the API (whether the TCP or internal channel).
 -----------------------------------------------------------
+newtype ContextsSerialisation = ContextsSerialisation (Array ContextSerialization)
+
+derive instance genericContextsSerialisation :: Generic ContextsSerialisation _
+
+instance encodeContextsSerialisation :: Encode ContextsSerialisation where
+  encode = genericEncode requestOptions
+
+instance decodeContextsSerialisation :: Decode ContextsSerialisation where
+  decode = genericDecode requestOptions
+
 newtype ContextSerialization = ContextSerialization ContextSerializationRecord
 
 type ContextSerializationRecord =
   { id :: String
+  , prototype :: Maybe ContextID
   , ctype :: ContextID
-  , rollen :: StrMap (Array RolSerialization)
+  , rollen :: F.Object (Array RolSerialization)
   , interneProperties :: PropertySerialization
   , externeProperties :: PropertySerialization
 }
@@ -109,9 +124,9 @@ newtype RolSerialization = RolSerialization
   , binding :: ID
 }
 defaultContextSerializationRecord :: ContextSerializationRecord
-defaultContextSerializationRecord = {id: "", ctype: "", rollen: empty, interneProperties: PropertySerialization empty, externeProperties: PropertySerialization empty}
+defaultContextSerializationRecord = {id: "", prototype: Nothing, ctype: "", rollen: F.empty, interneProperties: PropertySerialization F.empty, externeProperties: PropertySerialization F.empty}
 
-newtype PropertySerialization = PropertySerialization (StrMap (Array Value))
+newtype PropertySerialization = PropertySerialization (F.Object (Array Value))
 
 derive instance genericContextSerialization :: Generic ContextSerialization _
 
@@ -136,3 +151,13 @@ instance encodePropertySerialization :: Encode PropertySerialization where
 
 instance decodePropertySerialization :: Decode PropertySerialization where
   decode = genericDecode requestOptions
+
+instance showPropertySerialization :: Show PropertySerialization where
+  show (PropertySerialization s) =  show s
+
+instance showRolSerialization :: Show RolSerialization where
+  show (RolSerialization {properties, binding}) = "{ " <> show properties <> ", " <> binding <> " }"
+
+instance showContextSerialization :: Show ContextSerialization where
+  show (ContextSerialization {id, ctype, rollen, interneProperties, externeProperties}) =
+    "{ id=" <> id <> ", ctype=" <> ctype <> ", rollen=" <> show rollen <> ", interneProperties=" <> show interneProperties <> ", externeProperties=" <> show externeProperties

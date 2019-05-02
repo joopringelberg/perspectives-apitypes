@@ -14,3 +14,17 @@ $ npm install perspectives-apitypes
 
 ## Use the types in Purescript
 The module `Perspectives.ApiTypes` defines a Reqest and a Response type. These are simple records that are serialized prior to exchanging them over the TCP channel. The type `RequestType` enumerates the allowed type of requests, such as `GetRol`, `GetRolBinding`, etc.
+
+## Context- and Role serialisation
+These types are simpler versions of PerspectContext and PerspectRol as defined in the Core program. They cannot be put into Couchdb but are used to transport created contexts and roles through the API to the PDR.
+
+Example:
+```
+{ "id": "myContext"
+, "ctype": "myContextType"
+, "rollen": { Role1:  [ { "properties": { "prop1": "1", "prop2": "two" }, "binding": "someOtherRole" }
+                      , { "properties": {}, "binding": "yetAnotherRole" }  ]}
+, "interneProperties": {iprop1: "2"}
+, "externeProperties": {}
+}
+```
