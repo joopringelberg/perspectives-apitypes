@@ -2,12 +2,12 @@ module Perspectives.ApiTypes where
 
 import Prelude
 
-import Foreign (unsafeToForeign)
+import Data.Generic.Rep (class Generic)
+import Data.Maybe (Maybe(..))
+import Foreign (Foreign, unsafeToForeign)
 import Foreign.Class (class Decode, class Encode)
 import Foreign.Generic (defaultOptions, genericDecode, genericEncode)
 import Foreign.Generic.Types (Options)
-import Data.Generic.Rep (class Generic)
-import Data.Maybe (Maybe(..))
 import Foreign.Object (Object, empty) as F
 
 -- | Identifies Requests with Responses.
@@ -58,7 +58,7 @@ newtype Request = Request
   , predicate :: String
   , object :: String
   , setterId :: CorrelationIdentifier
-  , contextDescription :: ContextSerialization
+  , contextDescription :: Foreign
   , rolDescription :: RolSerialization}
 
 derive instance genericRequest :: Generic Request _
@@ -135,6 +135,10 @@ instance encodeContextSerialization :: Encode ContextSerialization where
 
 instance decodeContextSerialization :: Decode ContextSerialization where
   decode = genericDecode requestOptions
+  -- decode = unsafeFromForeign >>> readJSON'
+
+-- instance readForeignContextSerialisation :: ReadForeign ContextSerialization where
+--   readImpl x = readJSON' (unsafeFromForeign x)
 
 derive instance genericRolSerialization :: Generic RolSerialization _
 
