@@ -2,21 +2,35 @@ module Perspectives.ApiTypes where
 
 import Prelude
 
+import Control.Monad.Except (except)
+import Data.Either (Either(..))
 import Data.Generic.Rep (class Generic)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), fromJust)
+import Data.Newtype (class Newtype)
+import Effect (Effect)
 import Foreign (Foreign, unsafeToForeign)
 import Foreign.Class (class Decode, class Encode)
 import Foreign.Generic (defaultOptions, genericDecode, genericEncode)
 import Foreign.Generic.Types (Options)
 import Foreign.Object (Object, empty) as F
+import Partial.Unsafe (unsafePartial)
+import Unsafe.Coerce (unsafeCoerce)
 
 -- | Identifies Requests with Responses.
-type CorrelationIdentifier = String
+type CorrelationIdentifier = Int
 
 type ID = String
 type Value = String
 type ContextID = String
 
+-----------------------------------------------------------
+-- APIEFFECT
+-----------------------------------------------------------
+-- | The type of functions that are passed on as callbacks through the API.
+type ApiEffect = ResponseRecord -> Effect Unit
+
+mkApiEffect :: Maybe Foreign -> ApiEffect
+mkApiEffect f = unsafeCoerce $ unsafePartial $ fromJust f
 -----------------------------------------------------------
 -- REQUEST
 -----------------------------------------------------------
@@ -26,18 +40,43 @@ data RequestType =
     GetRolBinding
   | GetBinding
   | GetBindingType
-  | GetRol
   | GetRolContext
   | GetContextType
+  | GetRolType
+  | GetRol
   | GetProperty
   | GetViewProperties
-  | Unsubscribe
   | ShutDown
+  | Unsubscribe
+  | CreateContext
+  | CreateRol
+  | AddRol
+  | SetBinding
+  | SetProperty
+  | WrongRequest
 
 derive instance genericRequestType :: Generic RequestType _
 
 instance decodeRequestType :: Decode RequestType where
-  decode = genericDecode defaultOptions
+  -- decode = genericDecode defaultOptions
+  decode s = except $ Right $ case unsafeCoerce s of
+    "GetRolBinding" -> GetRolBinding
+    "GetBinding" -> GetBinding
+    "GetBindingType" -> GetBindingType
+    "GetRol" -> GetRol
+    "GetRolContext" -> GetRolContext
+    "GetContextType" -> GetContextType
+    "GetProperty" -> GetProperty
+    "GetViewProperties" -> GetViewProperties
+    "Unsubscribe" -> Unsubscribe
+    "ShutDown" -> ShutDown
+    "GetRolType" -> GetRolType
+    "CreateContext" -> CreateContext
+    "CreateRol" -> CreateRol
+    "AddRol" -> AddRol
+    "SetBinding" -> SetBinding
+    "SetProperty" -> SetProperty
+    _ -> WrongRequest
 
 instance encodeRequestType :: Encode RequestType where
   encode GetRolBinding = unsafeToForeign "GetRolBinding"
@@ -50,18 +89,55 @@ instance encodeRequestType :: Encode RequestType where
   encode GetViewProperties = unsafeToForeign "GetViewProperties"
   encode Unsubscribe = unsafeToForeign "Unsubscribe"
   encode ShutDown = unsafeToForeign "ShutDown"
+  encode GetRolType = unsafeToForeign "GetRolType"
+  encode CreateContext = unsafeToForeign "CreateContext"
+  encode CreateRol = unsafeToForeign "CreateRol"
+  encode AddRol = unsafeToForeign "AddRol"
+  encode SetBinding = unsafeToForeign "SetBinding"
+  encode SetProperty = unsafeToForeign "SetProperty"
+  encode WrongRequest = unsafeToForeign "WrongRequest"
+
+instance showRequestType :: Show RequestType where
+  show GetRolBinding = "GetRolBinding"
+  show GetBinding = "GetBinding"
+  show GetBindingType = "GetBindingType"
+  show GetRol = "GetRol"
+  show GetRolContext = "GetRolContext"
+  show GetContextType = "GetContextType"
+  show GetProperty = "GetProperty"
+  show GetViewProperties = "GetViewProperties"
+  show Unsubscribe = "Unsubscribe"
+  show ShutDown = "ShutDown"
+  show GetRolType = "GetRolType"
+  show CreateContext = "CreateContext"
+  show CreateRol = "CreateRol"
+  show AddRol = "AddRol"
+  show SetBinding = "SetBinding"
+  show SetProperty = "SetProperty"
+  show WrongRequest = "WrongRequest"
+
+instance eqRequestType :: Eq RequestType where
+  eq r1 r2 = show r1 == show r2
 
 -- | A request as can be sent to the core.
-newtype Request = Request
-  { rtype :: RequestType
+newtype Request = Request RequestRecord
+
+type RequestRecord =
+  { request :: RequestType
   , subject :: String
   , predicate :: String
   , object :: String
-  , setterId :: CorrelationIdentifier
+  , reactStateSetter :: Maybe Foreign
+  , corrId :: CorrelationIdentifier
   , contextDescription :: Foreign
-  , rolDescription :: RolSerialization}
+  , rolDescription :: Maybe RolSerialization}
 
 derive instance genericRequest :: Generic Request _
+
+derive instance newTypeRequest :: Newtype Request _
+
+showRequestRecord :: RequestRecord -> String
+showRequestRecord {request, subject, predicate} = "{" <> show request <> ", " <> subject <> ", " <> predicate <> "}"
 
 requestOptions :: Options
 requestOptions = defaultOptions { unwrapSingleConstructors = true }
@@ -80,18 +156,24 @@ instance encodeRequest :: Encode Request where
 -- | 'objects' in the basic fact <subject, predicate, object>.
 type Object = String
 
-newtype Response = Response {corrId :: CorrelationIdentifier, objects :: Array Object}
+newtype ResponseRecord = ResponseRecord {corrId :: CorrelationIdentifier, result :: Maybe (Array Object), error :: Maybe String}
 
-derive instance genericResponse :: Generic Response _
+derive instance genericResponse :: Generic ResponseRecord _
 
-instance encodeIdentifiableObjects :: Encode Response where
-  encode = genericEncode requestOptions
+instance encodeResponseRecord :: Encode ResponseRecord where
+  -- encode = genericEncode requestOptions
+  encode (ResponseRecord{corrId, result, error}) = case result of
+    Nothing -> unsafeToForeign {corrId: corrId, error: unsafePartial $ fromJust error}
+    (Just r) -> unsafeToForeign {corrId: corrId, result: r}
 
-instance decodeIdentifiableObjects :: Decode Response where
-  decode = genericDecode requestOptions
+data Response = Result CorrelationIdentifier (Array String) | Error CorrelationIdentifier String
 
-response ::  CorrelationIdentifier -> Array Object -> Response
-response corrId objects = Response {corrId, objects}
+-- response ::  CorrelationIdentifier -> Array Object -> Response
+-- response corrId objects = Response {corrId, objects}
+
+convertResponse :: Response -> Foreign
+convertResponse (Result i s) = unsafeToForeign {corrId: i, result: s}
+convertResponse (Error i s) = unsafeToForeign {corrId: i, error: s}
 
 -----------------------------------------------------------
 -- SERIALIZATION OF CONTEXTS AND ROLES ON THE API
