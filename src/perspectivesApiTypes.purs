@@ -203,7 +203,7 @@ type ContextSerializationRecord =
 
 newtype RolSerialization = RolSerialization
   { properties :: PropertySerialization
-  , binding :: ID
+  , binding :: Maybe ID
 }
 defaultContextSerializationRecord :: ContextSerializationRecord
 defaultContextSerializationRecord = {id: "", prototype: Nothing, ctype: "", rollen: F.empty, interneProperties: PropertySerialization F.empty, externeProperties: PropertySerialization F.empty}
@@ -242,7 +242,7 @@ instance showPropertySerialization :: Show PropertySerialization where
   show (PropertySerialization s) =  show s
 
 instance showRolSerialization :: Show RolSerialization where
-  show (RolSerialization {properties, binding}) = "{ " <> show properties <> ", " <> binding <> " }"
+  show (RolSerialization {properties, binding}) = "{ " <> show properties <> ", " <> show binding <> " }"
 
 instance showContextSerialization :: Show ContextSerialization where
   show (ContextSerialization {id, ctype, rollen, interneProperties, externeProperties}) =
