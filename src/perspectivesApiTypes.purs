@@ -49,6 +49,7 @@ data RequestType =
   | ShutDown
   | Unsubscribe
   | CreateContext
+  | DeleteContext
   | CreateRol
   | AddRol
   | SetBinding
@@ -72,6 +73,7 @@ instance decodeRequestType :: Decode RequestType where
     "ShutDown" -> ShutDown
     "GetRolType" -> GetRolType
     "CreateContext" -> CreateContext
+    "DeleteContext" -> DeleteContext
     "CreateRol" -> CreateRol
     "AddRol" -> AddRol
     "SetBinding" -> SetBinding
@@ -91,6 +93,7 @@ instance encodeRequestType :: Encode RequestType where
   encode ShutDown = unsafeToForeign "ShutDown"
   encode GetRolType = unsafeToForeign "GetRolType"
   encode CreateContext = unsafeToForeign "CreateContext"
+  encode DeleteContext = unsafeToForeign "DeleteContext"
   encode CreateRol = unsafeToForeign "CreateRol"
   encode AddRol = unsafeToForeign "AddRol"
   encode SetBinding = unsafeToForeign "SetBinding"
@@ -110,6 +113,7 @@ instance showRequestType :: Show RequestType where
   show ShutDown = "ShutDown"
   show GetRolType = "GetRolType"
   show CreateContext = "CreateContext"
+  show DeleteContext = "DeleteContext"
   show CreateRol = "CreateRol"
   show AddRol = "AddRol"
   show SetBinding = "SetBinding"
