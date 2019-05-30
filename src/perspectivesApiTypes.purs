@@ -44,6 +44,7 @@ data RequestType =
   | GetContextType
   | GetRolType
   | GetRol
+  | GetUnqualifiedRol
   | GetProperty
   | GetViewProperties
   | ShutDown
@@ -65,6 +66,7 @@ instance decodeRequestType :: Decode RequestType where
     "GetBinding" -> GetBinding
     "GetBindingType" -> GetBindingType
     "GetRol" -> GetRol
+    "GetUnqualifiedRol" -> GetUnqualifiedRol
     "GetRolContext" -> GetRolContext
     "GetContextType" -> GetContextType
     "GetProperty" -> GetProperty
@@ -85,6 +87,7 @@ instance encodeRequestType :: Encode RequestType where
   encode GetBinding = unsafeToForeign "GetBinding"
   encode GetBindingType = unsafeToForeign "GetBindingType"
   encode GetRol = unsafeToForeign "GetRol"
+  encode GetUnqualifiedRol = unsafeToForeign "GetUnqualifiedRol"
   encode GetRolContext = unsafeToForeign "GetRolContext"
   encode GetContextType = unsafeToForeign "GetContextType"
   encode GetProperty = unsafeToForeign "GetProperty"
@@ -105,6 +108,7 @@ instance showRequestType :: Show RequestType where
   show GetBinding = "GetBinding"
   show GetBindingType = "GetBindingType"
   show GetRol = "GetRol"
+  show GetUnqualifiedRol = "GetUnqualifiedRol"
   show GetRolContext = "GetRolContext"
   show GetContextType = "GetContextType"
   show GetProperty = "GetProperty"
