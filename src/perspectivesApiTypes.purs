@@ -52,6 +52,7 @@ data RequestType =
   | CreateContext
   | DeleteContext
   | CreateRol
+  | CreateRolWithLocalName
   | AddRol
   | SetBinding
   | SetProperty
@@ -77,6 +78,7 @@ instance decodeRequestType :: Decode RequestType where
     "CreateContext" -> CreateContext
     "DeleteContext" -> DeleteContext
     "CreateRol" -> CreateRol
+    "CreateRolWithLocalName" -> CreateRolWithLocalName
     "AddRol" -> AddRol
     "SetBinding" -> SetBinding
     "SetProperty" -> SetProperty
@@ -98,6 +100,7 @@ instance encodeRequestType :: Encode RequestType where
   encode CreateContext = unsafeToForeign "CreateContext"
   encode DeleteContext = unsafeToForeign "DeleteContext"
   encode CreateRol = unsafeToForeign "CreateRol"
+  encode CreateRolWithLocalName = unsafeToForeign "CreateRolWithLocalName"
   encode AddRol = unsafeToForeign "AddRol"
   encode SetBinding = unsafeToForeign "SetBinding"
   encode SetProperty = unsafeToForeign "SetProperty"
@@ -119,6 +122,7 @@ instance showRequestType :: Show RequestType where
   show CreateContext = "CreateContext"
   show DeleteContext = "DeleteContext"
   show CreateRol = "CreateRol"
+  show CreateRolWithLocalName = "CreateRolWithLocalName"
   show AddRol = "AddRol"
   show SetBinding = "SetBinding"
   show SetProperty = "SetProperty"
