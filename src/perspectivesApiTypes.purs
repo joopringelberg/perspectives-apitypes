@@ -43,6 +43,7 @@ data RequestType =
   | GetRolContext
   | GetContextType
   | GetRolType
+  | GetUnqualifiedRolType
   | GetRol
   | GetUnqualifiedRol
   | GetProperty
@@ -55,6 +56,7 @@ data RequestType =
   | CreateRolWithLocalName
   | AddRol
   | SetBinding
+  | BindInNewRol
   | SetProperty
   | WrongRequest
 
@@ -75,12 +77,14 @@ instance decodeRequestType :: Decode RequestType where
     "Unsubscribe" -> Unsubscribe
     "ShutDown" -> ShutDown
     "GetRolType" -> GetRolType
+    "GetUnqualifiedRolType" -> GetUnqualifiedRolType
     "CreateContext" -> CreateContext
     "DeleteContext" -> DeleteContext
     "CreateRol" -> CreateRol
     "CreateRolWithLocalName" -> CreateRolWithLocalName
     "AddRol" -> AddRol
     "SetBinding" -> SetBinding
+    "BindInNewRol" -> BindInNewRol
     "SetProperty" -> SetProperty
     _ -> WrongRequest
 
@@ -97,12 +101,14 @@ instance encodeRequestType :: Encode RequestType where
   encode Unsubscribe = unsafeToForeign "Unsubscribe"
   encode ShutDown = unsafeToForeign "ShutDown"
   encode GetRolType = unsafeToForeign "GetRolType"
+  encode GetUnqualifiedRolType = unsafeToForeign "GetUnqualifiedRolType"
   encode CreateContext = unsafeToForeign "CreateContext"
   encode DeleteContext = unsafeToForeign "DeleteContext"
   encode CreateRol = unsafeToForeign "CreateRol"
   encode CreateRolWithLocalName = unsafeToForeign "CreateRolWithLocalName"
   encode AddRol = unsafeToForeign "AddRol"
   encode SetBinding = unsafeToForeign "SetBinding"
+  encode BindInNewRol = unsafeToForeign "BindInNewRol"
   encode SetProperty = unsafeToForeign "SetProperty"
   encode WrongRequest = unsafeToForeign "WrongRequest"
 
@@ -119,12 +125,14 @@ instance showRequestType :: Show RequestType where
   show Unsubscribe = "Unsubscribe"
   show ShutDown = "ShutDown"
   show GetRolType = "GetRolType"
+  show GetUnqualifiedRolType = "GetUnqualifiedRolType"
   show CreateContext = "CreateContext"
   show DeleteContext = "DeleteContext"
   show CreateRol = "CreateRol"
   show CreateRolWithLocalName = "CreateRolWithLocalName"
   show AddRol = "AddRol"
   show SetBinding = "SetBinding"
+  show BindInNewRol = "BindInNewRol"
   show SetProperty = "SetProperty"
   show WrongRequest = "WrongRequest"
 
