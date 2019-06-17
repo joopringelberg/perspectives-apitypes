@@ -55,7 +55,9 @@ data RequestType =
   | CreateRol
   | CreateRolWithLocalName
   | AddRol
+  | RemoveRol
   | SetBinding
+  | RemoveBinding
   | BindInNewRol
   | SetProperty
   | WrongRequest
@@ -83,7 +85,9 @@ instance decodeRequestType :: Decode RequestType where
     "CreateRol" -> CreateRol
     "CreateRolWithLocalName" -> CreateRolWithLocalName
     "AddRol" -> AddRol
+    "RemoveRol" -> RemoveRol
     "SetBinding" -> SetBinding
+    "RemoveBinding" -> RemoveBinding
     "BindInNewRol" -> BindInNewRol
     "SetProperty" -> SetProperty
     _ -> WrongRequest
@@ -107,7 +111,9 @@ instance encodeRequestType :: Encode RequestType where
   encode CreateRol = unsafeToForeign "CreateRol"
   encode CreateRolWithLocalName = unsafeToForeign "CreateRolWithLocalName"
   encode AddRol = unsafeToForeign "AddRol"
+  encode RemoveRol = unsafeToForeign "RemoveRol"
   encode SetBinding = unsafeToForeign "SetBinding"
+  encode RemoveBinding = unsafeToForeign "RemoveBinding"
   encode BindInNewRol = unsafeToForeign "BindInNewRol"
   encode SetProperty = unsafeToForeign "SetProperty"
   encode WrongRequest = unsafeToForeign "WrongRequest"
@@ -131,7 +137,9 @@ instance showRequestType :: Show RequestType where
   show CreateRol = "CreateRol"
   show CreateRolWithLocalName = "CreateRolWithLocalName"
   show AddRol = "AddRol"
+  show RemoveRol = "RemoveRol"
   show SetBinding = "SetBinding"
+  show RemoveBinding = "RemoveBinding"
   show BindInNewRol = "BindInNewRol"
   show SetProperty = "SetProperty"
   show WrongRequest = "WrongRequest"
