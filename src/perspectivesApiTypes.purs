@@ -37,6 +37,7 @@ mkApiEffect f = unsafeCoerce $ unsafePartial $ fromJust f
 
 -- | The Perspectives Core accepts only a limited set of request types.
 data RequestType =
+  -- Consulting
     GetRolBinding
   | GetBinding
   | GetBindingType
@@ -48,18 +49,25 @@ data RequestType =
   | GetUnqualifiedRol
   | GetProperty
   | GetViewProperties
-  | ShutDown
-  | Unsubscribe
+
+  -- Pure Deltas
   | CreateContext
   | DeleteContext
   | CreateRol
-  | CreateRolWithLocalName
-  | AddRol
   | RemoveRol
+  | AddRol
   | SetBinding
   | RemoveBinding
-  | BindInNewRol
   | SetProperty
+
+  -- Conveniences
+  | CreateRolWithLocalName
+  | BindInNewRol
+
+  -- Meta
+  | Unsubscribe
+  | ShutDown
+  | CheckBinding
   | WrongRequest
 
 derive instance genericRequestType :: Generic RequestType _
@@ -89,6 +97,7 @@ instance decodeRequestType :: Decode RequestType where
     "SetBinding" -> SetBinding
     "RemoveBinding" -> RemoveBinding
     "BindInNewRol" -> BindInNewRol
+    "CheckBinding" -> CheckBinding
     "SetProperty" -> SetProperty
     _ -> WrongRequest
 
@@ -115,6 +124,7 @@ instance encodeRequestType :: Encode RequestType where
   encode SetBinding = unsafeToForeign "SetBinding"
   encode RemoveBinding = unsafeToForeign "RemoveBinding"
   encode BindInNewRol = unsafeToForeign "BindInNewRol"
+  encode CheckBinding = unsafeToForeign "CheckBinding"
   encode SetProperty = unsafeToForeign "SetProperty"
   encode WrongRequest = unsafeToForeign "WrongRequest"
 
@@ -141,6 +151,7 @@ instance showRequestType :: Show RequestType where
   show SetBinding = "SetBinding"
   show RemoveBinding = "RemoveBinding"
   show BindInNewRol = "BindInNewRol"
+  show CheckBinding = "CheckBinding"
   show SetProperty = "SetProperty"
   show WrongRequest = "WrongRequest"
 
