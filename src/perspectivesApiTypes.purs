@@ -27,10 +27,10 @@ type ContextID = String
 -- APIEFFECT
 -----------------------------------------------------------
 -- | The type of functions that are passed on as callbacks through the API.
-type ApiEffect = ResponseRecord -> Effect Unit
+type ApiEffect = Response -> Effect Unit
 
 mkApiEffect :: Maybe Foreign -> ApiEffect
-mkApiEffect f = unsafeCoerce $ unsafePartial $ fromJust f
+mkApiEffect f = (unsafeCoerce $ unsafePartial $ fromJust f) <<< convertResponse
 -----------------------------------------------------------
 -- REQUEST
 -----------------------------------------------------------
@@ -49,6 +49,7 @@ data RequestType =
   | GetUnqualifiedRol
   | GetProperty
   | GetViewProperties
+  | GetMeForContext
 
   -- Pure Deltas
   | CreateContext
@@ -84,6 +85,7 @@ instance decodeRequestType :: Decode RequestType where
     "GetContextType" -> GetContextType
     "GetProperty" -> GetProperty
     "GetViewProperties" -> GetViewProperties
+    "GetMeForContext" -> GetMeForContext
     "Unsubscribe" -> Unsubscribe
     "ShutDown" -> ShutDown
     "GetRolType" -> GetRolType
@@ -111,6 +113,7 @@ instance encodeRequestType :: Encode RequestType where
   encode GetContextType = unsafeToForeign "GetContextType"
   encode GetProperty = unsafeToForeign "GetProperty"
   encode GetViewProperties = unsafeToForeign "GetViewProperties"
+  encode GetMeForContext = unsafeToForeign "GetMeForContext"
   encode Unsubscribe = unsafeToForeign "Unsubscribe"
   encode ShutDown = unsafeToForeign "ShutDown"
   encode GetRolType = unsafeToForeign "GetRolType"
@@ -138,6 +141,7 @@ instance showRequestType :: Show RequestType where
   show GetContextType = "GetContextType"
   show GetProperty = "GetProperty"
   show GetViewProperties = "GetViewProperties"
+  show GetMeForContext = "GetMeForContext"
   show Unsubscribe = "Unsubscribe"
   show ShutDown = "ShutDown"
   show GetRolType = "GetRolType"
@@ -195,20 +199,10 @@ instance encodeRequest :: Encode Request where
 -- | 'objects' in the basic fact <subject, predicate, object>.
 type Object = String
 
-newtype ResponseRecord = ResponseRecord {corrId :: CorrelationIdentifier, result :: Maybe (Array Object), error :: Maybe String}
-
-derive instance genericResponse :: Generic ResponseRecord _
-
-instance encodeResponseRecord :: Encode ResponseRecord where
-  -- encode = genericEncode requestOptions
-  encode (ResponseRecord{corrId, result, error}) = case result of
-    Nothing -> unsafeToForeign {corrId: corrId, error: unsafePartial $ fromJust error}
-    (Just r) -> unsafeToForeign {corrId: corrId, result: r}
-
 data Response = Result CorrelationIdentifier (Array String) | Error CorrelationIdentifier String
 
--- response ::  CorrelationIdentifier -> Array Object -> Response
--- response corrId objects = Response {corrId, objects}
+instance encodeReponse :: Encode Response where
+  encode = convertResponse
 
 convertResponse :: Response -> Foreign
 convertResponse (Result i s) = unsafeToForeign {corrId: i, result: s}
@@ -236,7 +230,6 @@ type ContextSerializationRecord =
   , prototype :: Maybe ContextID
   , ctype :: ContextID
   , rollen :: F.Object (Array RolSerialization)
-  , interneProperties :: PropertySerialization
   , externeProperties :: PropertySerialization
 }
 
@@ -245,7 +238,7 @@ newtype RolSerialization = RolSerialization
   , binding :: Maybe ID
 }
 defaultContextSerializationRecord :: ContextSerializationRecord
-defaultContextSerializationRecord = {id: "", prototype: Nothing, ctype: "", rollen: F.empty, interneProperties: PropertySerialization F.empty, externeProperties: PropertySerialization F.empty}
+defaultContextSerializationRecord = {id: "", prototype: Nothing, ctype: "", rollen: F.empty, externeProperties: PropertySerialization F.empty}
 
 newtype PropertySerialization = PropertySerialization (F.Object (Array Value))
 
@@ -284,5 +277,5 @@ instance showRolSerialization :: Show RolSerialization where
   show (RolSerialization {properties, binding}) = "{ " <> show properties <> ", " <> show binding <> " }"
 
 instance showContextSerialization :: Show ContextSerialization where
-  show (ContextSerialization {id, ctype, rollen, interneProperties, externeProperties}) =
-    "{ id=" <> id <> ", ctype=" <> ctype <> ", rollen=" <> show rollen <> ", interneProperties=" <> show interneProperties <> ", externeProperties=" <> show externeProperties
+  show (ContextSerialization {id, ctype, rollen, externeProperties}) =
+    "{ id=" <> id <> ", ctype=" <> ctype <> ", rollen=" <> show rollen <> ", externeProperties=" <> show externeProperties

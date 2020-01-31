@@ -22,9 +22,22 @@ Example:
 ```
 { "id": "myContext"
 , "ctype": "myContextType"
-, "rollen": { Role1:  [ { "properties": { "prop1": "1", "prop2": "two" }, "binding": "someOtherRole" }
+, "rollen": { Role1:  [ { "properties": { "prop1": "1", "prop2": "two" }, "binding": "usr:Me" }
                       , { "properties": {}, "binding": "yetAnotherRole" }  ]}
 , "interneProperties": {iprop1: "2"}
 , "externeProperties": {}
 }
 ```
+
+1.  Default namespace prefixes are expanded.
+2.  Default indexed names are expanded.
+
+|Prefix|Namespace|
+|---|---|
+|sys|model:System|
+|usr|model:User|
+|cdb|model:Couchdb|
+
+|Indexed Name|Expansion|
+|---|---|
+|usr:Me|model:User$MijnSysteem$User_0001|
