@@ -8,12 +8,14 @@ import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe(..), fromJust)
 import Data.Newtype (class Newtype)
 import Effect (Effect)
-import Foreign (Foreign, unsafeToForeign)
+import Foreign (Foreign, readString, unsafeToForeign)
 import Foreign.Class (class Decode, class Encode)
 import Foreign.Generic (defaultOptions, genericDecode, genericEncode)
 import Foreign.Generic.Types (Options)
 import Foreign.Object (Object, empty) as F
 import Partial.Unsafe (unsafePartial)
+import Perspectives.SerializableNonEmptyArray (SerializableNonEmptyArray)
+import Simple.JSON (class ReadForeign, class WriteForeign, readJSON', write)
 import Unsafe.Coerce (unsafeCoerce)
 
 -- | Identifies Requests with Responses.
@@ -229,7 +231,7 @@ type ContextSerializationRecord =
   { id :: String
   , prototype :: Maybe ContextID
   , ctype :: ContextID
-  , rollen :: F.Object (Array RolSerialization)
+  , rollen :: F.Object (SerializableNonEmptyArray RolSerialization)
   , externeProperties :: PropertySerialization
 }
 
@@ -245,30 +247,42 @@ newtype PropertySerialization = PropertySerialization (F.Object (Array Value))
 derive instance genericContextSerialization :: Generic ContextSerialization _
 
 instance encodeContextSerialization :: Encode ContextSerialization where
-  encode = genericEncode requestOptions
+  encode (ContextSerialization c)= write c
 
 instance decodeContextSerialization :: Decode ContextSerialization where
-  decode = genericDecode requestOptions
-  -- decode = unsafeFromForeign >>> readJSON'
-
--- instance readForeignContextSerialisation :: ReadForeign ContextSerialization where
---   readImpl x = readJSON' (unsafeFromForeign x)
+  -- decode = genericDecode requestOptions
+  decode f = do
+    s <- readString f
+    inter <- readJSON' s
+    pure $ ContextSerialization inter
 
 derive instance genericRolSerialization :: Generic RolSerialization _
 
 instance encodeRolSerialization :: Encode RolSerialization where
   encode = genericEncode requestOptions
 
+instance writeForeignRolSerialization :: WriteForeign RolSerialization where
+  writeImpl (RolSerialization r) = write r
+
 instance decodeRolSerialization :: Decode RolSerialization where
   decode = genericDecode requestOptions
+
+instance readForeignRolSerialization :: ReadForeign RolSerialization where
+  readImpl f = readString f >>= readJSON' >>= pure <<< RolSerialization
 
 derive instance genericPropertySerialization :: Generic PropertySerialization _
 
 instance encodePropertySerialization :: Encode PropertySerialization where
   encode = genericEncode requestOptions
 
+instance writeForeignPropertySerialization :: WriteForeign PropertySerialization where
+  writeImpl (PropertySerialization p) = write p
+
 instance decodePropertySerialization :: Decode PropertySerialization where
   decode = genericDecode requestOptions
+
+instance readForeignPropertySerialization :: ReadForeign PropertySerialization where
+  readImpl f = readString f >>= readJSON' >>= pure <<< PropertySerialization
 
 instance showPropertySerialization :: Show PropertySerialization where
   show (PropertySerialization s) =  show s
