@@ -181,7 +181,8 @@ type RequestRecord =
   , reactStateSetter :: Maybe Foreign
   , corrId :: CorrelationIdentifier
   , contextDescription :: Foreign
-  , rolDescription :: Maybe RolSerialization}
+  , rolDescription :: Maybe RolSerialization
+  , authoringRole :: Maybe String}
 
 derive instance genericRequest :: Generic Request _
 
