@@ -65,6 +65,7 @@ data RequestType =
   | SetProperty
 
   | ImportContexts
+  | ImportTransaction
 
   -- Conveniences
   | CreateRolWithLocalName
@@ -107,6 +108,7 @@ instance decodeRequestType :: Decode RequestType where
     "CheckBinding" -> CheckBinding
     "SetProperty" -> SetProperty
     "ImportContexts" -> ImportContexts
+    "ImportTransaction" -> ImportTransaction
     _ -> WrongRequest
 
 instance encodeRequestType :: Encode RequestType where
@@ -136,6 +138,7 @@ instance encodeRequestType :: Encode RequestType where
   encode CheckBinding = unsafeToForeign "CheckBinding"
   encode SetProperty = unsafeToForeign "SetProperty"
   encode ImportContexts = unsafeToForeign "ImportContexts"
+  encode ImportTransaction = unsafeToForeign "ImportTransaction"
   encode WrongRequest = unsafeToForeign "WrongRequest"
 
 instance showRequestType :: Show RequestType where
@@ -165,6 +168,7 @@ instance showRequestType :: Show RequestType where
   show CheckBinding = "CheckBinding"
   show SetProperty = "SetProperty"
   show ImportContexts = "ImportContexts"
+  show ImportTransaction = "ImportTransaction"
   show WrongRequest = "WrongRequest"
 
 instance eqRequestType :: Eq RequestType where
