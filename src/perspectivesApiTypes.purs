@@ -44,6 +44,8 @@ data RequestType =
     GetRolBinding
   | GetBinding
   | GetBindingType
+  | GetRoleBinders
+  | GetUnqualifiedRoleBinders
   | GetRolContext
   | GetContextType
   | GetRolType
@@ -57,10 +59,11 @@ data RequestType =
 
   -- Pure Deltas
   | CreateContext
-  | DeleteContext
+  | CreateContext_
   | CreateRol
   | RemoveRol
-  | SetBinding
+  | DeleteRole
+  | Bind_ -- Formerly SetBinding
   | RemoveBinding
   | SetProperty
 
@@ -68,8 +71,7 @@ data RequestType =
   | ImportTransaction
 
   -- Conveniences
-  | CreateRolWithLocalName
-  | BindInNewRol
+  | Bind -- Formerly BindInNewRol
 
   -- Meta
   | Unsubscribe
@@ -85,6 +87,8 @@ instance decodeRequestType :: Decode RequestType where
     "GetRolBinding" -> GetRolBinding
     "GetBinding" -> GetBinding
     "GetBindingType" -> GetBindingType
+    "GetRoleBinders" -> GetRoleBinders
+    "GetUnqualifiedRoleBinders" -> GetUnqualifiedRoleBinders
     "GetRol" -> GetRol
     "GetUnqualifiedRol" -> GetUnqualifiedRol
     "GetRolContext" -> GetRolContext
@@ -98,13 +102,13 @@ instance decodeRequestType :: Decode RequestType where
     "GetRolType" -> GetRolType
     "GetUnqualifiedRolType" -> GetUnqualifiedRolType
     "CreateContext" -> CreateContext
-    "DeleteContext" -> DeleteContext
+    "CreateContext_" -> CreateContext_
     "CreateRol" -> CreateRol
-    "CreateRolWithLocalName" -> CreateRolWithLocalName
     "RemoveRol" -> RemoveRol
-    "SetBinding" -> SetBinding
+    "DeleteRole" -> DeleteRole
+    "Bind_" -> Bind_
     "RemoveBinding" -> RemoveBinding
-    "BindInNewRol" -> BindInNewRol
+    "Bind" -> Bind
     "CheckBinding" -> CheckBinding
     "SetProperty" -> SetProperty
     "ImportContexts" -> ImportContexts
@@ -115,6 +119,8 @@ instance encodeRequestType :: Encode RequestType where
   encode GetRolBinding = unsafeToForeign "GetRolBinding"
   encode GetBinding = unsafeToForeign "GetBinding"
   encode GetBindingType = unsafeToForeign "GetBindingType"
+  encode GetRoleBinders = unsafeToForeign "GetRoleBinders"
+  encode GetUnqualifiedRoleBinders = unsafeToForeign "GetUnqualifiedRoleBinders"
   encode GetRol = unsafeToForeign "GetRol"
   encode GetUnqualifiedRol = unsafeToForeign "GetUnqualifiedRol"
   encode GetRolContext = unsafeToForeign "GetRolContext"
@@ -128,13 +134,13 @@ instance encodeRequestType :: Encode RequestType where
   encode GetRolType = unsafeToForeign "GetRolType"
   encode GetUnqualifiedRolType = unsafeToForeign "GetUnqualifiedRolType"
   encode CreateContext = unsafeToForeign "CreateContext"
-  encode DeleteContext = unsafeToForeign "DeleteContext"
+  encode CreateContext_ = unsafeToForeign "CreateContext_"
   encode CreateRol = unsafeToForeign "CreateRol"
-  encode CreateRolWithLocalName = unsafeToForeign "CreateRolWithLocalName"
   encode RemoveRol = unsafeToForeign "RemoveRol"
-  encode SetBinding = unsafeToForeign "SetBinding"
+  encode DeleteRole = unsafeToForeign "DeleteRole"
+  encode Bind_ = unsafeToForeign "Bind_"
   encode RemoveBinding = unsafeToForeign "RemoveBinding"
-  encode BindInNewRol = unsafeToForeign "BindInNewRol"
+  encode Bind = unsafeToForeign "Bind"
   encode CheckBinding = unsafeToForeign "CheckBinding"
   encode SetProperty = unsafeToForeign "SetProperty"
   encode ImportContexts = unsafeToForeign "ImportContexts"
@@ -145,6 +151,8 @@ instance showRequestType :: Show RequestType where
   show GetRolBinding = "GetRolBinding"
   show GetBinding = "GetBinding"
   show GetBindingType = "GetBindingType"
+  show GetRoleBinders = "GetRoleBinders"
+  show GetUnqualifiedRoleBinders = "GetUnqualifiedRoleBinders"
   show GetRol = "GetRol"
   show GetUnqualifiedRol = "GetUnqualifiedRol"
   show GetRolContext = "GetRolContext"
@@ -158,13 +166,13 @@ instance showRequestType :: Show RequestType where
   show GetRolType = "GetRolType"
   show GetUnqualifiedRolType = "GetUnqualifiedRolType"
   show CreateContext = "CreateContext"
-  show DeleteContext = "DeleteContext"
+  show CreateContext_ = "CreateContext_"
   show CreateRol = "CreateRol"
-  show CreateRolWithLocalName = "CreateRolWithLocalName"
   show RemoveRol = "RemoveRol"
-  show SetBinding = "SetBinding"
+  show DeleteRole = "DeleteRole"
+  show Bind_ = "Bind_"
   show RemoveBinding = "RemoveBinding"
-  show BindInNewRol = "BindInNewRol"
+  show Bind = "Bind"
   show CheckBinding = "CheckBinding"
   show SetProperty = "SetProperty"
   show ImportContexts = "ImportContexts"
