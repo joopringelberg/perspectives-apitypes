@@ -49,6 +49,7 @@ data RequestType =
   | GetRolContext
   | GetContextType
   | GetRolType
+  | GetRoleKind
   | GetUnqualifiedRolType
   | GetRol
   | GetUnqualifiedRol
@@ -66,6 +67,7 @@ data RequestType =
   | Bind_ -- Formerly SetBinding
   | RemoveBinding
   | SetProperty
+  | DeleteProperty
 
   | ImportContexts
   | ImportTransaction
@@ -100,6 +102,7 @@ instance decodeRequestType :: Decode RequestType where
     "Unsubscribe" -> Unsubscribe
     "ShutDown" -> ShutDown
     "GetRolType" -> GetRolType
+    "GetRoleKind" -> GetRoleKind
     "GetUnqualifiedRolType" -> GetUnqualifiedRolType
     "CreateContext" -> CreateContext
     "CreateContext_" -> CreateContext_
@@ -111,6 +114,7 @@ instance decodeRequestType :: Decode RequestType where
     "Bind" -> Bind
     "CheckBinding" -> CheckBinding
     "SetProperty" -> SetProperty
+    "DeleteProperty" -> DeleteProperty
     "ImportContexts" -> ImportContexts
     "ImportTransaction" -> ImportTransaction
     _ -> WrongRequest
@@ -132,6 +136,7 @@ instance encodeRequestType :: Encode RequestType where
   encode Unsubscribe = unsafeToForeign "Unsubscribe"
   encode ShutDown = unsafeToForeign "ShutDown"
   encode GetRolType = unsafeToForeign "GetRolType"
+  encode GetRoleKind = unsafeToForeign "GetRoleKind"
   encode GetUnqualifiedRolType = unsafeToForeign "GetUnqualifiedRolType"
   encode CreateContext = unsafeToForeign "CreateContext"
   encode CreateContext_ = unsafeToForeign "CreateContext_"
@@ -143,6 +148,7 @@ instance encodeRequestType :: Encode RequestType where
   encode Bind = unsafeToForeign "Bind"
   encode CheckBinding = unsafeToForeign "CheckBinding"
   encode SetProperty = unsafeToForeign "SetProperty"
+  encode DeleteProperty = unsafeToForeign "DeleteProperty"
   encode ImportContexts = unsafeToForeign "ImportContexts"
   encode ImportTransaction = unsafeToForeign "ImportTransaction"
   encode WrongRequest = unsafeToForeign "WrongRequest"
@@ -164,6 +170,7 @@ instance showRequestType :: Show RequestType where
   show Unsubscribe = "Unsubscribe"
   show ShutDown = "ShutDown"
   show GetRolType = "GetRolType"
+  show GetRoleKind = "GetRoleKind"
   show GetUnqualifiedRolType = "GetUnqualifiedRolType"
   show CreateContext = "CreateContext"
   show CreateContext_ = "CreateContext_"
@@ -175,6 +182,7 @@ instance showRequestType :: Show RequestType where
   show Bind = "Bind"
   show CheckBinding = "CheckBinding"
   show SetProperty = "SetProperty"
+  show DeleteProperty = "DeleteProperty"
   show ImportContexts = "ImportContexts"
   show ImportTransaction = "ImportTransaction"
   show WrongRequest = "WrongRequest"
