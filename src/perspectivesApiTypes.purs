@@ -57,6 +57,7 @@ data RequestType =
   | GetViewProperties
   | GetMeForContext
   | GetUserIdentifier
+  | GetLocalRoleSpecialisation
 
   -- Pure Deltas
   | CreateContext
@@ -99,6 +100,7 @@ instance decodeRequestType :: Decode RequestType where
     "GetViewProperties" -> GetViewProperties
     "GetMeForContext" -> GetMeForContext
     "GetUserIdentifier" -> GetUserIdentifier
+    "GetLocalRoleSpecialisation" -> GetLocalRoleSpecialisation
     "Unsubscribe" -> Unsubscribe
     "ShutDown" -> ShutDown
     "GetRolType" -> GetRolType
@@ -133,6 +135,7 @@ instance encodeRequestType :: Encode RequestType where
   encode GetViewProperties = unsafeToForeign "GetViewProperties"
   encode GetMeForContext = unsafeToForeign "GetMeForContext"
   encode GetUserIdentifier = unsafeToForeign "GetUserIdentifier"
+  encode GetLocalRoleSpecialisation = unsafeToForeign "GetLocalRoleSpecialisation"
   encode Unsubscribe = unsafeToForeign "Unsubscribe"
   encode ShutDown = unsafeToForeign "ShutDown"
   encode GetRolType = unsafeToForeign "GetRolType"
@@ -167,6 +170,7 @@ instance showRequestType :: Show RequestType where
   show GetViewProperties = "GetViewProperties"
   show GetMeForContext = "GetMeForContext"
   show GetUserIdentifier = "GetUserIdentifier"
+  show GetLocalRoleSpecialisation = "GetLocalRoleSpecialisation"
   show Unsubscribe = "Unsubscribe"
   show ShutDown = "ShutDown"
   show GetRolType = "GetRolType"
