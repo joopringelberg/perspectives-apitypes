@@ -41,11 +41,11 @@ mkApiEffect f = (unsafeCoerce $ unsafePartial $ fromJust f) <<< convertResponse
 -- | The Perspectives Core accepts only a limited set of request types.
 data RequestType =
   -- Consulting
-    GetRolBinding
-  | GetBinding
-  | GetBindingType
+    -- GetRolBinding
+    GetBinding
+  -- | GetBindingType
   | GetRoleBinders
-  | GetUnqualifiedRoleBinders
+  -- | GetUnqualifiedRoleBinders
   | GetRolContext
   | GetContextType
   | GetRolType
@@ -54,10 +54,12 @@ data RequestType =
   | GetRol
   | GetUnqualifiedRol
   | GetProperty
+  | GetPropertyFromLocalName
   | GetViewProperties
   | GetMeForContext
   | GetUserIdentifier
   | GetLocalRoleSpecialisation
+  | MatchContextName
 
   -- Pure Deltas
   | CreateContext
@@ -97,10 +99,12 @@ instance decodeRequestType :: Decode RequestType where
     "GetRolContext" -> GetRolContext
     "GetContextType" -> GetContextType
     "GetProperty" -> GetProperty
+    "GetPropertyFromLocalName" -> GetPropertyFromLocalName
     "GetViewProperties" -> GetViewProperties
     "GetMeForContext" -> GetMeForContext
     "GetUserIdentifier" -> GetUserIdentifier
     "GetLocalRoleSpecialisation" -> GetLocalRoleSpecialisation
+    "MatchContextName" -> MatchContextName
     "Unsubscribe" -> Unsubscribe
     "ShutDown" -> ShutDown
     "GetRolType" -> GetRolType
@@ -132,10 +136,12 @@ instance encodeRequestType :: Encode RequestType where
   encode GetRolContext = unsafeToForeign "GetRolContext"
   encode GetContextType = unsafeToForeign "GetContextType"
   encode GetProperty = unsafeToForeign "GetProperty"
+  encode GetPropertyFromLocalName = unsafeToForeign "GetPropertyFromLocalName"
   encode GetViewProperties = unsafeToForeign "GetViewProperties"
   encode GetMeForContext = unsafeToForeign "GetMeForContext"
   encode GetUserIdentifier = unsafeToForeign "GetUserIdentifier"
   encode GetLocalRoleSpecialisation = unsafeToForeign "GetLocalRoleSpecialisation"
+  encode MatchContextName = unsafeToForeign "MatchContextName"
   encode Unsubscribe = unsafeToForeign "Unsubscribe"
   encode ShutDown = unsafeToForeign "ShutDown"
   encode GetRolType = unsafeToForeign "GetRolType"
@@ -167,10 +173,12 @@ instance showRequestType :: Show RequestType where
   show GetRolContext = "GetRolContext"
   show GetContextType = "GetContextType"
   show GetProperty = "GetProperty"
+  show GetPropertyFromLocalName = "GetPropertyFromLocalName"
   show GetViewProperties = "GetViewProperties"
   show GetMeForContext = "GetMeForContext"
   show GetUserIdentifier = "GetUserIdentifier"
   show GetLocalRoleSpecialisation = "GetLocalRoleSpecialisation"
+  show MatchContextName = "MatchContextName"
   show Unsubscribe = "Unsubscribe"
   show ShutDown = "ShutDown"
   show GetRolType = "GetRolType"
