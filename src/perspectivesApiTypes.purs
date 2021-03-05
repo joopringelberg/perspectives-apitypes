@@ -41,11 +41,8 @@ mkApiEffect f = (unsafeCoerce $ unsafePartial $ fromJust f) <<< convertResponse
 -- | The Perspectives Core accepts only a limited set of request types.
 data RequestType =
   -- Consulting
-    -- GetRolBinding
     GetBinding
-  -- | GetBindingType
   | GetRoleBinders
-  -- | GetUnqualifiedRoleBinders
   | GetRolContext
   | GetContextType
   | GetRolType
@@ -89,11 +86,8 @@ derive instance genericRequestType :: Generic RequestType _
 instance decodeRequestType :: Decode RequestType where
   -- decode = genericDecode defaultOptions
   decode s = except $ Right $ case unsafeCoerce s of
-    "GetRolBinding" -> GetRolBinding
     "GetBinding" -> GetBinding
-    "GetBindingType" -> GetBindingType
     "GetRoleBinders" -> GetRoleBinders
-    "GetUnqualifiedRoleBinders" -> GetUnqualifiedRoleBinders
     "GetRol" -> GetRol
     "GetUnqualifiedRol" -> GetUnqualifiedRol
     "GetRolContext" -> GetRolContext
@@ -126,11 +120,8 @@ instance decodeRequestType :: Decode RequestType where
     _ -> WrongRequest
 
 instance encodeRequestType :: Encode RequestType where
-  encode GetRolBinding = unsafeToForeign "GetRolBinding"
   encode GetBinding = unsafeToForeign "GetBinding"
-  encode GetBindingType = unsafeToForeign "GetBindingType"
   encode GetRoleBinders = unsafeToForeign "GetRoleBinders"
-  encode GetUnqualifiedRoleBinders = unsafeToForeign "GetUnqualifiedRoleBinders"
   encode GetRol = unsafeToForeign "GetRol"
   encode GetUnqualifiedRol = unsafeToForeign "GetUnqualifiedRol"
   encode GetRolContext = unsafeToForeign "GetRolContext"
@@ -163,11 +154,8 @@ instance encodeRequestType :: Encode RequestType where
   encode WrongRequest = unsafeToForeign "WrongRequest"
 
 instance showRequestType :: Show RequestType where
-  show GetRolBinding = "GetRolBinding"
   show GetBinding = "GetBinding"
-  show GetBindingType = "GetBindingType"
   show GetRoleBinders = "GetRoleBinders"
-  show GetUnqualifiedRoleBinders = "GetUnqualifiedRoleBinders"
   show GetRol = "GetRol"
   show GetUnqualifiedRol = "GetUnqualifiedRol"
   show GetRolContext = "GetRolContext"
@@ -222,6 +210,9 @@ derive instance newTypeRequest :: Newtype Request _
 
 showRequestRecord :: RequestRecord -> String
 showRequestRecord {request, subject, predicate} = "{" <> show request <> ", " <> subject <> ", " <> predicate <> "}"
+
+instance showRequest :: Show Request where
+  show (Request r) = showRequestRecord r
 
 requestOptions :: Options
 requestOptions = defaultOptions { unwrapSingleConstructors = true }
