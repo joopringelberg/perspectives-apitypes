@@ -5,6 +5,7 @@ import Prelude
 import Control.Monad.Except (except)
 import Data.Either (Either(..))
 import Data.Generic.Rep (class Generic)
+import Data.Generic.Rep.Show (genericShow)
 import Data.Maybe (Maybe(..), fromJust)
 import Data.Newtype (class Newtype)
 import Effect (Effect)
@@ -54,9 +55,13 @@ data RequestType =
   | GetPropertyFromLocalName
   | GetViewProperties
   | GetMeForContext
+  | GetAllMyRoleTypes
   | GetUserIdentifier
+  | GetPerspectives
+  | GetRolesWithProperties
   | GetLocalRoleSpecialisation
   | MatchContextName
+  | GetCouchdbUrl
 
   -- Pure Deltas
   | CreateContext
@@ -68,6 +73,8 @@ data RequestType =
   | RemoveBinding
   | SetProperty
   | DeleteProperty
+
+  | SetPreferredUserRoleType
 
   | ImportContexts
   | ImportTransaction
@@ -96,9 +103,15 @@ instance decodeRequestType :: Decode RequestType where
     "GetPropertyFromLocalName" -> GetPropertyFromLocalName
     "GetViewProperties" -> GetViewProperties
     "GetMeForContext" -> GetMeForContext
+    "GetAllMyRoleTypes" -> GetAllMyRoleTypes
+
+
     "GetUserIdentifier" -> GetUserIdentifier
+    "GetPerspectives" -> GetPerspectives
+    "GetRolesWithProperties" -> GetRolesWithProperties
     "GetLocalRoleSpecialisation" -> GetLocalRoleSpecialisation
     "MatchContextName" -> MatchContextName
+    "GetCouchdbUrl" -> GetCouchdbUrl
     "Unsubscribe" -> Unsubscribe
     "ShutDown" -> ShutDown
     "GetRolType" -> GetRolType
@@ -115,11 +128,13 @@ instance decodeRequestType :: Decode RequestType where
     "CheckBinding" -> CheckBinding
     "SetProperty" -> SetProperty
     "DeleteProperty" -> DeleteProperty
+    "SetPreferredUserRoleType" -> SetPreferredUserRoleType
     "ImportContexts" -> ImportContexts
     "ImportTransaction" -> ImportTransaction
     _ -> WrongRequest
 
 instance encodeRequestType :: Encode RequestType where
+  -- encode = genericEncode defaultOptions
   encode GetBinding = unsafeToForeign "GetBinding"
   encode GetRoleBinders = unsafeToForeign "GetRoleBinders"
   encode GetRol = unsafeToForeign "GetRol"
@@ -130,9 +145,13 @@ instance encodeRequestType :: Encode RequestType where
   encode GetPropertyFromLocalName = unsafeToForeign "GetPropertyFromLocalName"
   encode GetViewProperties = unsafeToForeign "GetViewProperties"
   encode GetMeForContext = unsafeToForeign "GetMeForContext"
+  encode GetAllMyRoleTypes = unsafeToForeign "GetAllMyRoleTypes"
   encode GetUserIdentifier = unsafeToForeign "GetUserIdentifier"
+  encode GetPerspectives = unsafeToForeign "GetPerspectives"
+  encode GetRolesWithProperties = unsafeToForeign "GetRolesWithProperties"
   encode GetLocalRoleSpecialisation = unsafeToForeign "GetLocalRoleSpecialisation"
   encode MatchContextName = unsafeToForeign "MatchContextName"
+  encode GetCouchdbUrl = unsafeToForeign "GetCouchdbUrl"
   encode Unsubscribe = unsafeToForeign "Unsubscribe"
   encode ShutDown = unsafeToForeign "ShutDown"
   encode GetRolType = unsafeToForeign "GetRolType"
@@ -149,11 +168,13 @@ instance encodeRequestType :: Encode RequestType where
   encode CheckBinding = unsafeToForeign "CheckBinding"
   encode SetProperty = unsafeToForeign "SetProperty"
   encode DeleteProperty = unsafeToForeign "DeleteProperty"
+  encode SetPreferredUserRoleType = unsafeToForeign "SetPreferredUserRoleType"
   encode ImportContexts = unsafeToForeign "ImportContexts"
   encode ImportTransaction = unsafeToForeign "ImportTransaction"
   encode WrongRequest = unsafeToForeign "WrongRequest"
 
 instance showRequestType :: Show RequestType where
+  -- show = genericShow
   show GetBinding = "GetBinding"
   show GetRoleBinders = "GetRoleBinders"
   show GetRol = "GetRol"
@@ -164,9 +185,13 @@ instance showRequestType :: Show RequestType where
   show GetPropertyFromLocalName = "GetPropertyFromLocalName"
   show GetViewProperties = "GetViewProperties"
   show GetMeForContext = "GetMeForContext"
+  show GetAllMyRoleTypes = "GetAllMyRoleTypes"
   show GetUserIdentifier = "GetUserIdentifier"
+  show GetPerspectives = "GetPerspectives"
+  show GetRolesWithProperties = "GetRolesWithProperties"
   show GetLocalRoleSpecialisation = "GetLocalRoleSpecialisation"
   show MatchContextName = "MatchContextName"
+  show GetCouchdbUrl = "GetCouchdbUrl"
   show Unsubscribe = "Unsubscribe"
   show ShutDown = "ShutDown"
   show GetRolType = "GetRolType"
@@ -183,6 +208,7 @@ instance showRequestType :: Show RequestType where
   show CheckBinding = "CheckBinding"
   show SetProperty = "SetProperty"
   show DeleteProperty = "DeleteProperty"
+  show SetPreferredUserRoleType = "SetPreferredUserRoleType"
   show ImportContexts = "ImportContexts"
   show ImportTransaction = "ImportTransaction"
   show WrongRequest = "WrongRequest"
