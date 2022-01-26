@@ -58,21 +58,27 @@ data RequestType =
   | GetAllMyRoleTypes
   | GetUserIdentifier
   | GetPerspectives
+  | GetContextActions
   | GetRolesWithProperties
   | GetLocalRoleSpecialisation
   | MatchContextName
   | GetCouchdbUrl
+  | GetRoleName
 
   -- Pure Deltas
   | CreateContext
   | CreateContext_
   | CreateRol
   | RemoveRol
+  | RemoveContext
   | DeleteRole
   | Bind_ -- Formerly SetBinding
   | RemoveBinding
   | SetProperty
   | DeleteProperty
+
+  | Action
+  | ContextAction
 
   | SetPreferredUserRoleType
 
@@ -108,10 +114,12 @@ instance decodeRequestType :: Decode RequestType where
 
     "GetUserIdentifier" -> GetUserIdentifier
     "GetPerspectives" -> GetPerspectives
+    "GetContextActions" -> GetContextActions
     "GetRolesWithProperties" -> GetRolesWithProperties
     "GetLocalRoleSpecialisation" -> GetLocalRoleSpecialisation
     "MatchContextName" -> MatchContextName
     "GetCouchdbUrl" -> GetCouchdbUrl
+    "GetRoleName" -> GetRoleName
     "Unsubscribe" -> Unsubscribe
     "ShutDown" -> ShutDown
     "GetRolType" -> GetRolType
@@ -121,6 +129,7 @@ instance decodeRequestType :: Decode RequestType where
     "CreateContext_" -> CreateContext_
     "CreateRol" -> CreateRol
     "RemoveRol" -> RemoveRol
+    "RemoveContext" -> RemoveContext
     "DeleteRole" -> DeleteRole
     "Bind_" -> Bind_
     "RemoveBinding" -> RemoveBinding
@@ -128,6 +137,8 @@ instance decodeRequestType :: Decode RequestType where
     "CheckBinding" -> CheckBinding
     "SetProperty" -> SetProperty
     "DeleteProperty" -> DeleteProperty
+    "Action" -> Action
+    "ContextAction" -> ContextAction
     "SetPreferredUserRoleType" -> SetPreferredUserRoleType
     "ImportContexts" -> ImportContexts
     "ImportTransaction" -> ImportTransaction
@@ -148,10 +159,12 @@ instance encodeRequestType :: Encode RequestType where
   encode GetAllMyRoleTypes = unsafeToForeign "GetAllMyRoleTypes"
   encode GetUserIdentifier = unsafeToForeign "GetUserIdentifier"
   encode GetPerspectives = unsafeToForeign "GetPerspectives"
+  encode GetContextActions = unsafeToForeign "GetContextActions"
   encode GetRolesWithProperties = unsafeToForeign "GetRolesWithProperties"
   encode GetLocalRoleSpecialisation = unsafeToForeign "GetLocalRoleSpecialisation"
   encode MatchContextName = unsafeToForeign "MatchContextName"
   encode GetCouchdbUrl = unsafeToForeign "GetCouchdbUrl"
+  encode GetRoleName = unsafeToForeign "GetRoleName"
   encode Unsubscribe = unsafeToForeign "Unsubscribe"
   encode ShutDown = unsafeToForeign "ShutDown"
   encode GetRolType = unsafeToForeign "GetRolType"
@@ -161,6 +174,7 @@ instance encodeRequestType :: Encode RequestType where
   encode CreateContext_ = unsafeToForeign "CreateContext_"
   encode CreateRol = unsafeToForeign "CreateRol"
   encode RemoveRol = unsafeToForeign "RemoveRol"
+  encode RemoveContext = unsafeToForeign "RemoveContext"
   encode DeleteRole = unsafeToForeign "DeleteRole"
   encode Bind_ = unsafeToForeign "Bind_"
   encode RemoveBinding = unsafeToForeign "RemoveBinding"
@@ -168,6 +182,8 @@ instance encodeRequestType :: Encode RequestType where
   encode CheckBinding = unsafeToForeign "CheckBinding"
   encode SetProperty = unsafeToForeign "SetProperty"
   encode DeleteProperty = unsafeToForeign "DeleteProperty"
+  encode Action = unsafeToForeign "Action"
+  encode ContextAction = unsafeToForeign "ContextAction"
   encode SetPreferredUserRoleType = unsafeToForeign "SetPreferredUserRoleType"
   encode ImportContexts = unsafeToForeign "ImportContexts"
   encode ImportTransaction = unsafeToForeign "ImportTransaction"
@@ -188,10 +204,12 @@ instance showRequestType :: Show RequestType where
   show GetAllMyRoleTypes = "GetAllMyRoleTypes"
   show GetUserIdentifier = "GetUserIdentifier"
   show GetPerspectives = "GetPerspectives"
+  show GetContextActions = "GetContextActions"
   show GetRolesWithProperties = "GetRolesWithProperties"
   show GetLocalRoleSpecialisation = "GetLocalRoleSpecialisation"
   show MatchContextName = "MatchContextName"
   show GetCouchdbUrl = "GetCouchdbUrl"
+  show GetRoleName = "GetRoleName"
   show Unsubscribe = "Unsubscribe"
   show ShutDown = "ShutDown"
   show GetRolType = "GetRolType"
@@ -201,6 +219,7 @@ instance showRequestType :: Show RequestType where
   show CreateContext_ = "CreateContext_"
   show CreateRol = "CreateRol"
   show RemoveRol = "RemoveRol"
+  show RemoveContext = "RemoveContext"
   show DeleteRole = "DeleteRole"
   show Bind_ = "Bind_"
   show RemoveBinding = "RemoveBinding"
@@ -208,6 +227,8 @@ instance showRequestType :: Show RequestType where
   show CheckBinding = "CheckBinding"
   show SetProperty = "SetProperty"
   show DeleteProperty = "DeleteProperty"
+  show Action = "Action"
+  show ContextAction = "ContextAction"
   show SetPreferredUserRoleType = "SetPreferredUserRoleType"
   show ImportContexts = "ImportContexts"
   show ImportTransaction = "ImportTransaction"
