@@ -58,6 +58,7 @@ data RequestType =
   | GetAllMyRoleTypes
   | GetUserIdentifier
   | GetPerspectives
+  | GetPerspective
   | GetContextActions
   | GetRolesWithProperties
   | GetLocalRoleSpecialisation
@@ -114,6 +115,7 @@ instance decodeRequestType :: Decode RequestType where
 
     "GetUserIdentifier" -> GetUserIdentifier
     "GetPerspectives" -> GetPerspectives
+    "GetPerspective" -> GetPerspective
     "GetContextActions" -> GetContextActions
     "GetRolesWithProperties" -> GetRolesWithProperties
     "GetLocalRoleSpecialisation" -> GetLocalRoleSpecialisation
@@ -159,6 +161,7 @@ instance encodeRequestType :: Encode RequestType where
   encode GetAllMyRoleTypes = unsafeToForeign "GetAllMyRoleTypes"
   encode GetUserIdentifier = unsafeToForeign "GetUserIdentifier"
   encode GetPerspectives = unsafeToForeign "GetPerspectives"
+  encode GetPerspective = unsafeToForeign "GetPerspective"
   encode GetContextActions = unsafeToForeign "GetContextActions"
   encode GetRolesWithProperties = unsafeToForeign "GetRolesWithProperties"
   encode GetLocalRoleSpecialisation = unsafeToForeign "GetLocalRoleSpecialisation"
@@ -204,6 +207,7 @@ instance showRequestType :: Show RequestType where
   show GetAllMyRoleTypes = "GetAllMyRoleTypes"
   show GetUserIdentifier = "GetUserIdentifier"
   show GetPerspectives = "GetPerspectives"
+  show GetPerspective = "GetPerspective"
   show GetContextActions = "GetContextActions"
   show GetRolesWithProperties = "GetRolesWithProperties"
   show GetLocalRoleSpecialisation = "GetLocalRoleSpecialisation"
