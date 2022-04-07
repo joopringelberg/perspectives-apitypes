@@ -128,7 +128,7 @@ in  upstream
       , "perspectives-utilities"
       , "foreign"
       , "simple-json"
-      , "foreign-class"
+      , "foreign-generic"
       , "arrays"
       , "either"
       , "foldable-traversable"
@@ -140,13 +140,5 @@ in  upstream
     , repo =
         "https://github.com/joopringelberg/serialisable-nonempty-arrays.git"
     , version =
-        "v1.0.0"
-    }
-  with foreign-class =
-    { dependencies =
-        ["prelude"]
-    , repo =
-        "https://github.com/paf31/purescript-foreign-generic.git"
-    , version =
-        "v11.0.0"
+        "v1.0.1"
     }

@@ -14,7 +14,7 @@ to generate this file without the comments in this block.
 , dependencies =
   [ "console"
   , "effect"
-  , "foreign-class"
+  , "foreign-generic"
   , "prelude"
   , "simple-json"
   , "perspectives-utilities"
