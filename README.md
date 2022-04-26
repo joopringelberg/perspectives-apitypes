@@ -41,3 +41,6 @@ Example:
 |Indexed Name|Expansion|
 |---|---|
 |usr:Me|model:User$MijnSysteem$User_0001|
+
+## Dependency management
+See [Publishing a new version](https://github.com/joopringelberg/perspectives-core/blob/master/technical%20readme.md#publishing-a-new-version) in the Perspectives Core (PDR) project.
