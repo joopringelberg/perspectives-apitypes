@@ -18,7 +18,7 @@ in  upstream
     , repo =
         "https://github.com/joopringelberg/perspectives-utilities.git"
     , version =
-        "v1.0.0"
+        "v1.1.0"
     }
   with serializablenonemptyarray =
     { dependencies =
@@ -40,5 +40,5 @@ in  upstream
     , repo =
         "https://github.com/joopringelberg/serialisable-nonempty-arrays.git"
     , version =
-        "v1.0.1"
+        "v1.1.0"
     }

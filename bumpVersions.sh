@@ -5,8 +5,8 @@
 # * createPerspectivesLinks.sh
 # * package.json
 
-UTILITIES=v1.0.0
-SERIALIZABLENONEMPTYARRAY=v1.0.1
+UTILITIES=v1.1.0
+SERIALIZABLENONEMPTYARRAY=v1.1.0
 
 sed "s/UTILITIES/${UTILITIES}/g;\
 s/SERIALIZABLENONEMPTYARRAY/${SERIALIZABLENONEMPTYARRAY}/g;" packages.template.dhall > packages.dhall

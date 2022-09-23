@@ -8,19 +8,19 @@
 cd .spago
 
 
-##### PERSPECTIVES-v1.0.0
+##### PERSPECTIVES-v1.1.0
 cd perspectives-utilities
 
-rm -Rf v v1.0.0
-ln -s ../../../perspectives-utilities v1.0.0
+rm -Rf v v1.1.0
+ln -s ../../../perspectives-utilities v1.1.0
 
 cd ..
 
-##### PERSPECTIVES-v1.0.0
+##### PERSPECTIVES-v1.1.0
 cd serializablenonemptyarray
 
-rm -Rf v v1.0.1
-ln -s ../../../serialisable-nonempty-arrays v1.0.1
+rm -Rf v v1.1.0
+ln -s ../../../serialisable-nonempty-arrays v1.1.0
 
 cd ..
 

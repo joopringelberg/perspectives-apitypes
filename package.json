@@ -1,10 +1,10 @@
 {
   "name": "perspectives-apitypes",
-  "version": "2.13.2",
+  "version": "2.13.3",
   "description": "Types to use for communicating over TCP with Perspectives-core.",
   "main": "src/perspectivesApiTypes.purs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
