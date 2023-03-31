@@ -7,11 +7,11 @@ import Data.Either (Either(..))
 import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe(..), fromJust)
 import Data.Newtype (class Newtype)
+import Data.Show.Generic (genericShow)
 import Effect (Effect)
 import Foreign (Foreign, unsafeToForeign)
 import Foreign.Class (class Decode, class Encode, decode, encode)
-import Foreign.Generic (defaultOptions, genericDecode, genericEncode, Options)
--- import Foreign.Generic.Types (Options)
+import Foreign.Generic (Options, defaultOptions, genericDecode)
 import Foreign.Object (Object, empty) as F
 import Partial.Unsafe (unsafePartial)
 import Perspectives.SerializableNonEmptyArray (SerializableNonEmptyArray)
@@ -147,99 +147,8 @@ instance decodeRequestType :: Decode RequestType where
     "ImportTransaction" -> ImportTransaction
     _ -> WrongRequest
 
-instance encodeRequestType :: Encode RequestType where
-  -- encode = genericEncode defaultOptions
-  encode GetBinding = unsafeToForeign "GetBinding"
-  encode GetRoleBinders = unsafeToForeign "GetRoleBinders"
-  encode GetRol = unsafeToForeign "GetRol"
-  encode GetUnqualifiedRol = unsafeToForeign "GetUnqualifiedRol"
-  encode GetRolContext = unsafeToForeign "GetRolContext"
-  encode GetContextType = unsafeToForeign "GetContextType"
-  encode GetProperty = unsafeToForeign "GetProperty"
-  encode GetPropertyFromLocalName = unsafeToForeign "GetPropertyFromLocalName"
-  encode GetViewProperties = unsafeToForeign "GetViewProperties"
-  encode GetMeForContext = unsafeToForeign "GetMeForContext"
-  encode GetAllMyRoleTypes = unsafeToForeign "GetAllMyRoleTypes"
-  encode GetUserIdentifier = unsafeToForeign "GetUserIdentifier"
-  encode GetPerspectives = unsafeToForeign "GetPerspectives"
-  encode GetPerspective = unsafeToForeign "GetPerspective"
-  encode GetScreen = unsafeToForeign "GetScreen"
-  encode GetContextActions = unsafeToForeign "GetContextActions"
-  encode GetRolesWithProperties = unsafeToForeign "GetRolesWithProperties"
-  encode GetLocalRoleSpecialisation = unsafeToForeign "GetLocalRoleSpecialisation"
-  encode MatchContextName = unsafeToForeign "MatchContextName"
-  encode GetCouchdbUrl = unsafeToForeign "GetCouchdbUrl"
-  encode GetRoleName = unsafeToForeign "GetRoleName"
-  encode Unsubscribe = unsafeToForeign "Unsubscribe"
-  encode ShutDown = unsafeToForeign "ShutDown"
-  encode GetRolType = unsafeToForeign "GetRolType"
-  encode GetRoleKind = unsafeToForeign "GetRoleKind"
-  encode GetUnqualifiedRolType = unsafeToForeign "GetUnqualifiedRolType"
-  encode CreateContext = unsafeToForeign "CreateContext"
-  encode CreateContext_ = unsafeToForeign "CreateContext_"
-  encode CreateRol = unsafeToForeign "CreateRol"
-  encode RemoveRol = unsafeToForeign "RemoveRol"
-  encode RemoveContext = unsafeToForeign "RemoveContext"
-  encode DeleteRole = unsafeToForeign "DeleteRole"
-  encode Bind_ = unsafeToForeign "Bind_"
-  encode RemoveBinding = unsafeToForeign "RemoveBinding"
-  encode Bind = unsafeToForeign "Bind"
-  encode CheckBinding = unsafeToForeign "CheckBinding"
-  encode SetProperty = unsafeToForeign "SetProperty"
-  encode DeleteProperty = unsafeToForeign "DeleteProperty"
-  encode Action = unsafeToForeign "Action"
-  encode ContextAction = unsafeToForeign "ContextAction"
-  encode SetPreferredUserRoleType = unsafeToForeign "SetPreferredUserRoleType"
-  encode ImportContexts = unsafeToForeign "ImportContexts"
-  encode ImportTransaction = unsafeToForeign "ImportTransaction"
-  encode WrongRequest = unsafeToForeign "WrongRequest"
-
 instance showRequestType :: Show RequestType where
-  -- show = genericShow
-  show GetBinding = "GetBinding"
-  show GetRoleBinders = "GetRoleBinders"
-  show GetRol = "GetRol"
-  show GetUnqualifiedRol = "GetUnqualifiedRol"
-  show GetRolContext = "GetRolContext"
-  show GetContextType = "GetContextType"
-  show GetProperty = "GetProperty"
-  show GetPropertyFromLocalName = "GetPropertyFromLocalName"
-  show GetViewProperties = "GetViewProperties"
-  show GetMeForContext = "GetMeForContext"
-  show GetAllMyRoleTypes = "GetAllMyRoleTypes"
-  show GetUserIdentifier = "GetUserIdentifier"
-  show GetPerspectives = "GetPerspectives"
-  show GetPerspective = "GetPerspective"
-  show GetScreen = "GetScreen"
-  show GetContextActions = "GetContextActions"
-  show GetRolesWithProperties = "GetRolesWithProperties"
-  show GetLocalRoleSpecialisation = "GetLocalRoleSpecialisation"
-  show MatchContextName = "MatchContextName"
-  show GetCouchdbUrl = "GetCouchdbUrl"
-  show GetRoleName = "GetRoleName"
-  show Unsubscribe = "Unsubscribe"
-  show ShutDown = "ShutDown"
-  show GetRolType = "GetRolType"
-  show GetRoleKind = "GetRoleKind"
-  show GetUnqualifiedRolType = "GetUnqualifiedRolType"
-  show CreateContext = "CreateContext"
-  show CreateContext_ = "CreateContext_"
-  show CreateRol = "CreateRol"
-  show RemoveRol = "RemoveRol"
-  show RemoveContext = "RemoveContext"
-  show DeleteRole = "DeleteRole"
-  show Bind_ = "Bind_"
-  show RemoveBinding = "RemoveBinding"
-  show Bind = "Bind"
-  show CheckBinding = "CheckBinding"
-  show SetProperty = "SetProperty"
-  show DeleteProperty = "DeleteProperty"
-  show Action = "Action"
-  show ContextAction = "ContextAction"
-  show SetPreferredUserRoleType = "SetPreferredUserRoleType"
-  show ImportContexts = "ImportContexts"
-  show ImportTransaction = "ImportTransaction"
-  show WrongRequest = "WrongRequest"
+  show = genericShow
 
 instance eqRequestType :: Eq RequestType where
   eq r1 r2 = show r1 == show r2
@@ -256,7 +165,8 @@ type RequestRecord =
   , corrId :: CorrelationIdentifier
   , contextDescription :: Foreign
   , rolDescription :: Maybe RolSerialization
-  , authoringRole :: Maybe String}
+  , authoringRole :: Maybe String
+  , onlyOnce :: Boolean}
 
 derive instance genericRequest :: Generic Request _
 
@@ -274,8 +184,13 @@ requestOptions = defaultOptions { unwrapSingleConstructors = true }
 instance decodeRequest :: Decode Request where
   decode = genericDecode requestOptions
 
-instance encodeRequest :: Encode Request where
-  encode = genericEncode requestOptions
+
+newtype RecordWithCorrelationidentifier = RecordWithCorrelationidentifier {corrId :: CorrelationIdentifier, reactStateSetter :: Maybe Foreign}
+
+derive instance Generic RecordWithCorrelationidentifier _
+
+instance Decode RecordWithCorrelationidentifier where 
+  decode = genericDecode requestOptions
 
 -----------------------------------------------------------
 -- RESPONSE
@@ -319,7 +234,7 @@ instance decodeContextsSerialisation :: Decode ContextsSerialisation where
 newtype ContextSerialization = ContextSerialization ContextSerializationRecord
 
 type ContextSerializationRecord =
-  { id :: String
+  { id :: Maybe String
   , prototype :: Maybe ContextID
   , ctype :: ContextID
   , rollen :: F.Object (SerializableNonEmptyArray RolSerialization)
@@ -332,7 +247,7 @@ derive instance genericContextSerialization :: Generic ContextSerialization _
 
 instance showContextSerialization :: Show ContextSerialization where
   show (ContextSerialization {id, ctype, rollen, externeProperties}) =
-    "{ id=" <> id <> ", ctype=" <> ctype <> ", rollen=" <> show rollen <> ", externeProperties=" <> show externeProperties
+    "{ id=" <> show id <> ", ctype=" <> ctype <> ", rollen=" <> show rollen <> ", externeProperties=" <> show externeProperties
 
 instance encodeContextSerialization :: Encode ContextSerialization where
   encode (ContextSerialization c)= write c
@@ -341,7 +256,7 @@ instance decodeContextSerialization :: Decode ContextSerialization where
   decode = read' >=> pure <<< ContextSerialization
 
 defaultContextSerializationRecord :: ContextSerializationRecord
-defaultContextSerializationRecord = {id: "", prototype: Nothing, ctype: "", rollen: F.empty, externeProperties: PropertySerialization F.empty}
+defaultContextSerializationRecord = {id: Nothing, prototype: Nothing, ctype: "", rollen: F.empty, externeProperties: PropertySerialization F.empty}
 
 instance prettyPrintContextSerialization :: PrettyPrint ContextSerialization where
   prettyPrint' tab (ContextSerialization r) = "ContextSerialization " <> prettyPrint' (tab <> "  ") r
