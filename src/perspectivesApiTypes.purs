@@ -86,6 +86,8 @@ data RequestType =
   | ImportContexts
   | ImportTransaction
 
+  | SaveFile
+
   -- Conveniences
   | Bind -- Formerly BindInNewRol
 
@@ -145,6 +147,7 @@ instance decodeRequestType :: Decode RequestType where
     "SetPreferredUserRoleType" -> SetPreferredUserRoleType
     "ImportContexts" -> ImportContexts
     "ImportTransaction" -> ImportTransaction
+    "SaveFile" -> SaveFile
     _ -> WrongRequest
 
 instance showRequestType :: Show RequestType where
