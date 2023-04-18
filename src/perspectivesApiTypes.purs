@@ -65,6 +65,7 @@ data RequestType =
   | MatchContextName
   | GetCouchdbUrl
   | GetRoleName
+  | GetFile
 
   -- Pure Deltas
   | CreateContext
@@ -113,6 +114,7 @@ instance decodeRequestType :: Decode RequestType where
     "GetViewProperties" -> GetViewProperties
     "GetMeForContext" -> GetMeForContext
     "GetAllMyRoleTypes" -> GetAllMyRoleTypes
+    "GetFile" -> GetFile
 
 
     "GetUserIdentifier" -> GetUserIdentifier
