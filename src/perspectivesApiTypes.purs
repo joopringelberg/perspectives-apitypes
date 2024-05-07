@@ -55,13 +55,13 @@ data RequestType =
   | GetViewProperties
   | GetMeForContext
   | GetAllMyRoleTypes
-  | GetUserIdentifier
+  | GetSystemIdentifier
   | GetPerspectives
   | GetPerspective
   | GetScreen
   | GetContextActions
   | GetRolesWithProperties
-  | GetLocalRoleSpecialisation
+  | GetLocalRoleSpecialisation 
   | MatchContextName
   | GetCouchdbUrl
   | GetRoleName
@@ -119,7 +119,7 @@ instance decodeRequestType :: Decode RequestType where
     "GetPublicUrl" -> GetPublicUrl
 
 
-    "GetUserIdentifier" -> GetUserIdentifier
+    "GetSystemIdentifier" -> GetSystemIdentifier
     "GetPerspectives" -> GetPerspectives
     "GetPerspective" -> GetPerspective
     "GetScreen" -> GetScreen
