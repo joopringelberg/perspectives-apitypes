@@ -56,6 +56,7 @@ data RequestType =
   | GetMeForContext
   | GetAllMyRoleTypes
   | GetSystemIdentifier
+  | GetPerspectivesUser 
   | GetPerspectives
   | GetPerspective
   | GetScreen
@@ -120,6 +121,7 @@ instance decodeRequestType :: Decode RequestType where
 
 
     "GetSystemIdentifier" -> GetSystemIdentifier
+    "GetPerspectivesUser" -> GetPerspectivesUser
     "GetPerspectives" -> GetPerspectives
     "GetPerspective" -> GetPerspective
     "GetScreen" -> GetScreen
