@@ -156,7 +156,7 @@ instance decodeRequestType :: Decode RequestType where
     "ImportContexts" -> ImportContexts
     "ImportTransaction" -> ImportTransaction
     "SaveFile" -> SaveFile
-    "Save" -> SaveFile
+    "Save" -> Save
     _ -> WrongRequest
 
 instance showRequestType :: Show RequestType where
