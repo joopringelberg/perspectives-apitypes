@@ -51,12 +51,16 @@ data RequestType =
   | GetRol
   | GetUnqualifiedRol
   | GetProperty
+  | AddProperty
   | GetPropertyFromLocalName
   | GetViewProperties
   | GetMeForContext
   | GetAllMyRoleTypes
   | GetSystemIdentifier
   | GetPerspectivesUser 
+  | GetMeInContext
+  | GetFileShareCredentials
+  | GetChatParticipants
   | GetPerspectives
   | GetPerspective
   | GetScreen
@@ -114,6 +118,7 @@ instance decodeRequestType :: Decode RequestType where
     "GetRolContext" -> GetRolContext
     "GetContextType" -> GetContextType
     "GetProperty" -> GetProperty
+    "AddProperty" -> AddProperty
     "GetPropertyFromLocalName" -> GetPropertyFromLocalName
     "GetViewProperties" -> GetViewProperties
     "GetMeForContext" -> GetMeForContext
@@ -124,6 +129,9 @@ instance decodeRequestType :: Decode RequestType where
 
     "GetSystemIdentifier" -> GetSystemIdentifier
     "GetPerspectivesUser" -> GetPerspectivesUser
+    "GetMeInContext" -> GetMeInContext
+    "GetFileShareCredentials" -> GetFileShareCredentials
+    "GetChatParticipants" -> GetChatParticipants
     "GetPerspectives" -> GetPerspectives
     "GetPerspective" -> GetPerspective
     "GetScreen" -> GetScreen
