@@ -1,0 +1,53 @@
+package:
+  dependencies:
+  - console
+  - effect
+  - either
+  - foreign
+  # - foreign-generic
+  - foreign-object
+  - maybe
+  - newtype
+  - partial
+  - perspectives-utilities
+  - prelude
+  - serializablenonemptyarray
+  - simple-json
+  - transformers
+  - unsafe-coerce
+  name: perspectives-proxy
+workspace:
+  extra_packages:
+    perspectives-utilities:
+      dependencies:
+      - arrays
+      - console
+      - effect
+      - foldable-traversable
+      - foreign-object
+      - maybe
+      - prelude
+      - transformers
+      - tuples
+      git: https://github.com/joopringelberg/perspectives-utilities.git
+      ref: v1.1.0
+    serializablenonemptyarray:
+      dependencies:
+      - arrays
+      - console
+      - effect
+      - either
+      - foldable-traversable
+      - foreign
+      # - foreign-generic
+      - lists
+      - maybe
+      - newtype
+      - perspectives-utilities
+      - prelude
+      - simple-json
+      - transformers
+      git: https://github.com/joopringelberg/serialisable-nonempty-arrays.git
+      ref: v1.1.0
+  packageSet:
+    registry: 60.6.0
