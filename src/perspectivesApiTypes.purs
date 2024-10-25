@@ -10,13 +10,11 @@ import Data.Newtype (class Newtype)
 import Data.Show.Generic (genericShow)
 import Effect (Effect)
 import Foreign (Foreign, unsafeToForeign)
-import Foreign.Class (class Decode, class Encode, decode, encode)
-import Foreign.Generic (Options, defaultOptions, genericDecode)
 import Foreign.Object (Object, empty) as F
 import Partial.Unsafe (unsafePartial)
 import Perspectives.SerializableNonEmptyArray (SerializableNonEmptyArray)
 import Perspectives.Utilities (class PrettyPrint, prettyPrint')
-import Simple.JSON (class ReadForeign, class WriteForeign, read', write)
+import Simple.JSON (class ReadForeign, class WriteForeign) 
 import Unsafe.Coerce (unsafeCoerce)
 
 -- | Identifies Requests with Responses.
@@ -27,7 +25,7 @@ type Value = String
 type ContextID = String
 
 -----------------------------------------------------------
--- APIEFFECT
+-- APIEFFECT 
 -----------------------------------------------------------
 -- | The type of functions that are passed on as callbacks through the API.
 type ApiEffect = Response -> Effect Unit
@@ -108,9 +106,8 @@ data RequestType =
 
 derive instance genericRequestType :: Generic RequestType _
 
-instance decodeRequestType :: Decode RequestType where
-  -- decode = genericDecode defaultOptions
-  decode s = except $ Right $ case unsafeCoerce s of
+instance decodeRequestType :: ReadForeign RequestType where
+  readImpl s = except $ Right $ case unsafeCoerce s of
     "GetBinding" -> GetBinding
     "GetRoleBinders" -> GetRoleBinders
     "GetRol" -> GetRol
@@ -198,19 +195,13 @@ showRequestRecord {request, subject, predicate} = "{" <> show request <> ", " <>
 instance showRequest :: Show Request where
   show (Request r) = showRequestRecord r
 
-requestOptions :: Options
-requestOptions = defaultOptions { unwrapSingleConstructors = true }
-
-instance decodeRequest :: Decode Request where
-  decode = genericDecode requestOptions
-
+derive newtype instance ReadForeign Request
 
 newtype RecordWithCorrelationidentifier = RecordWithCorrelationidentifier {corrId :: CorrelationIdentifier, reactStateSetter :: Maybe Foreign}
 
 derive instance Generic RecordWithCorrelationidentifier _
 
-instance Decode RecordWithCorrelationidentifier where 
-  decode = genericDecode requestOptions
+derive newtype instance ReadForeign RecordWithCorrelationidentifier
 
 -----------------------------------------------------------
 -- RESPONSE
@@ -222,8 +213,8 @@ type Object = String
 
 data Response = Result CorrelationIdentifier (Array String) | Error CorrelationIdentifier String
 
-instance encodeReponse :: Encode Response where
-  encode = convertResponse
+instance WriteForeign Response where
+  writeImpl = convertResponse
 
 convertResponse :: Response -> Foreign
 convertResponse (Result i s) = unsafeToForeign {corrId: i, result: s}
@@ -242,11 +233,8 @@ newtype ContextsSerialisation = ContextsSerialisation (Array ContextSerializatio
 
 derive instance genericContextsSerialisation :: Generic ContextsSerialisation _
 
-instance encodeContextsSerialisation :: Encode ContextsSerialisation where
-  encode (ContextsSerialisation cs) = encode cs
-
-instance decodeContextsSerialisation :: Decode ContextsSerialisation where
-  decode = decode >=> pure <<< ContextsSerialisation
+derive newtype instance WriteForeign ContextsSerialisation
+derive newtype instance ReadForeign ContextsSerialisation
 
 -----------------------------------------------------------
 ---- CONTEXTSERIALIZATION
@@ -269,11 +257,8 @@ instance showContextSerialization :: Show ContextSerialization where
   show (ContextSerialization {id, ctype, rollen, externeProperties}) =
     "{ id=" <> show id <> ", ctype=" <> ctype <> ", rollen=" <> show rollen <> ", externeProperties=" <> show externeProperties
 
-instance encodeContextSerialization :: Encode ContextSerialization where
-  encode (ContextSerialization c)= write c
-
-instance decodeContextSerialization :: Decode ContextSerialization where
-  decode = read' >=> pure <<< ContextSerialization
+derive newtype instance WriteForeign ContextSerialization
+derive newtype instance ReadForeign ContextSerialization
 
 defaultContextSerializationRecord :: ContextSerializationRecord
 defaultContextSerializationRecord = {id: Nothing, prototype: Nothing, ctype: "", rollen: F.empty, externeProperties: PropertySerialization F.empty}
@@ -297,18 +282,8 @@ derive newtype instance eqRolSerialization :: Eq RolSerialization
 instance showRolSerialization :: Show RolSerialization where
   show (RolSerialization {properties, binding}) = "{ " <> show properties <> ", " <> show binding <> " }"
 
-instance encodeRolSerialization :: Encode RolSerialization where
-  encode = write
-
-instance writeForeignRolSerialization :: WriteForeign RolSerialization where
-  writeImpl (RolSerialization r) = write r
-
-instance decodeRolSerialization :: Decode RolSerialization where
-  decode = read'
-
-instance readForeignRolSerialization :: ReadForeign RolSerialization where
-  -- readImpl f = readString f >>= readJSON' >>= pure <<< RolSerialization
-  readImpl = read' >=> pure <<< RolSerialization
+derive newtype instance WriteForeign RolSerialization
+derive newtype instance ReadForeign RolSerialization
 
 instance prettyPrintRolSerialization :: PrettyPrint RolSerialization where
   prettyPrint' tab (RolSerialization r) = "RolSerialization " <> prettyPrint' (tab <> "  ") r
@@ -325,17 +300,8 @@ derive newtype instance eqPropertySerialization :: Eq PropertySerialization
 instance showPropertySerialization :: Show PropertySerialization where
   show (PropertySerialization s) =  show s
 
-instance encodePropertySerialization :: Encode PropertySerialization where
-  encode = write
-
-instance writeForeignPropertySerialization :: WriteForeign PropertySerialization where
-  writeImpl (PropertySerialization p) = write p
-
-instance decodePropertySerialization :: Decode PropertySerialization where
-  decode = read'
-
-instance readForeignPropertySerialization :: ReadForeign PropertySerialization where
-  readImpl = read' >=> pure <<< PropertySerialization
+derive newtype instance WriteForeign PropertySerialization
+derive newtype instance ReadForeign PropertySerialization
 
 instance prettyPrintPropertySerialization :: PrettyPrint PropertySerialization where
   prettyPrint' tab (PropertySerialization r) = "PropertySerialization " <> prettyPrint' (tab <> "  ") r
