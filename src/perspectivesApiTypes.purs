@@ -103,6 +103,7 @@ data RequestType =
   | ShutDown
   | CheckBinding
   | WrongRequest
+  | EvaluateRoleInstance
 
 derive instance genericRequestType :: Generic RequestType _
 
@@ -162,6 +163,7 @@ instance decodeRequestType :: ReadForeign RequestType where
     "ImportTransaction" -> ImportTransaction
     "SaveFile" -> SaveFile
     "Save" -> Save
+    "EvaluateRoleInstance" -> EvaluateRoleInstance
     _ -> WrongRequest
 
 instance showRequestType :: Show RequestType where
