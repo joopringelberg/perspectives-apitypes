@@ -62,6 +62,7 @@ data RequestType =
   | GetPerspectives
   | GetPerspective
   | GetScreen
+  | GetTableForm
   | GetContextActions
   | GetRolesWithProperties
   | GetLocalRoleSpecialisation 
@@ -133,6 +134,7 @@ instance decodeRequestType :: ReadForeign RequestType where
     "GetPerspectives" -> GetPerspectives
     "GetPerspective" -> GetPerspective
     "GetScreen" -> GetScreen
+    "GetTableForm" -> GetTableForm
     "GetContextActions" -> GetContextActions
     "GetRolesWithProperties" -> GetRolesWithProperties
     "GetLocalRoleSpecialisation" -> GetLocalRoleSpecialisation
@@ -219,8 +221,8 @@ instance WriteForeign Response where
   writeImpl = convertResponse
 
 convertResponse :: Response -> Foreign
-convertResponse (Result i s) = unsafeToForeign {corrId: i, result: s}
-convertResponse (Error i s) = unsafeToForeign {corrId: i, error: s}
+convertResponse (Result i s) = unsafeToForeign {responseType: "APIresult", corrId: i, result: s}
+convertResponse (Error i s) = unsafeToForeign {responseType: "APIerror", corrId: i, error: s}
 
 -----------------------------------------------------------
 -- SERIALIZATION OF CONTEXTS AND ROLES ON THE API
